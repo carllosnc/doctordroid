@@ -178,7 +178,7 @@ fun TemperatureDonutChart(temp: Float, modifier: Modifier = Modifier) {
 
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Canvas(modifier = Modifier.fillMaxSize()) {
-            val strokeWidth = 18.dp.toPx()
+            val strokeWidth = 12.dp.toPx()
 
             drawArc(
                 color = trackColor,
@@ -217,7 +217,7 @@ fun TemperatureDetailsList(batteryTemp: Float, ambientTemp: Float?) {
         TemperatureDetailItem(label = "Battery Temp", value = String.format(Locale.getDefault(), "%.1f °C", batteryTemp))
         TemperatureDetailItem(label = "Ambient Temp", value = ambientTemp?.let { String.format(Locale.getDefault(), "%.1f °C", it) } ?: "Not Available")
         
-        // Android doesn't expose CPU temp easily on newer versions without root or system files
+        // Android doesn\'t expose CPU temp easily on newer versions without root or system files
         TemperatureDetailItem(label = "Thermal Status", value = "Normal")
     }
 }

@@ -160,7 +160,7 @@ fun BatteryDonutChart(levelPercentage: Float, modifier: Modifier = Modifier) {
 
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Canvas(modifier = Modifier.fillMaxSize()) {
-            val strokeWidth = 18.dp.toPx()
+            val strokeWidth = 12.dp.toPx()
 
             // Track
             drawArc(

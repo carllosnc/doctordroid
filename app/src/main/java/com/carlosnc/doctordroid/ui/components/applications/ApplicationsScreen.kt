@@ -196,6 +196,12 @@ fun AppListItem(app: AppInfo) {
         
         Column(modifier = Modifier.weight(1f)) {
             Text(
+                text = Formatter.formatFileSize(context, app.size),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.secondary,
+                fontWeight = FontWeight.Medium
+            )
+            Text(
                 text = app.name,
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.SemiBold
@@ -211,13 +217,6 @@ fun AppListItem(app: AppInfo) {
                 color = MaterialTheme.colorScheme.primary
             )
         }
-
-        Text(
-            text = Formatter.formatFileSize(context, app.size),
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.secondary
-        )
     }
 }
 
