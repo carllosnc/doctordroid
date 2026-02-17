@@ -7,11 +7,14 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.carlosnc.doctordroid.ui.components.applications.ApplicationsScreen
 import com.carlosnc.doctordroid.ui.components.battery.BatteryScreen
 import com.carlosnc.doctordroid.ui.components.cpu.CpuScreen
 import com.carlosnc.doctordroid.ui.components.device.DeviceScreen
 import com.carlosnc.doctordroid.ui.components.memory.MemoryScreen
+import com.carlosnc.doctordroid.ui.components.network.NetworkScreen
 import com.carlosnc.doctordroid.ui.components.storage.StorageScreen
+import com.carlosnc.doctordroid.ui.components.temperature.TemperatureScreen
 import com.carlosnc.doctordroid.ui.screens.HomeScreen
 import kotlinx.serialization.Serializable
 
@@ -32,6 +35,15 @@ object Cpu
 
 @Serializable
 object Device
+
+@Serializable
+object Temperature
+
+@Serializable
+object Applications
+
+@Serializable
+object Network
 
 @Composable
 fun AppNavHost(
@@ -73,7 +85,10 @@ fun AppNavHost(
                 onMemoryClick = { navController.navigate(Memory) },
                 onBatteryClick = { navController.navigate(Battery) },
                 onCpuClick = { navController.navigate(Cpu) },
-                onDeviceClick = { navController.navigate(Device) }
+                onDeviceClick = { navController.navigate(Device) },
+                onTemperatureClick = { navController.navigate(Temperature) },
+                onApplicationsClick = { navController.navigate(Applications) },
+                onNetworkClick = { navController.navigate(Network) }
             )
         }
         composable<Storage> {
@@ -90,6 +105,15 @@ fun AppNavHost(
         }
         composable<Device> {
             DeviceScreen(onBackClick = { navController.popBackStack() })
+        }
+        composable<Temperature> {
+            TemperatureScreen(onBackClick = { navController.popBackStack() })
+        }
+        composable<Applications> {
+            ApplicationsScreen(onBackClick = { navController.popBackStack() })
+        }
+        composable<Network> {
+            NetworkScreen(onBackClick = { navController.popBackStack() })
         }
     }
 }

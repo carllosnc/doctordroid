@@ -35,11 +35,6 @@ import androidx.compose.material.icons.filled.Nfc
 import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.SdCard
-import androidx.compose.material.icons.filled.Security
-import androidx.compose.material.icons.filled.Sensors
-import androidx.compose.material.icons.filled.SettingsBackupRestore
-import androidx.compose.material.icons.filled.SimCard
-import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -50,6 +45,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,6 +55,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.Sensors
+import androidx.compose.material.icons.filled.SettingsBackupRestore
+import androidx.compose.material.icons.filled.SimCard
+import androidx.compose.material.icons.filled.Timer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,7 +68,7 @@ fun DeviceScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val hardwareInfo = getHardwareInfo(context)
+    val hardwareInfo = remember { getHardwareInfo(context) }
     val systemInfo = getSystemInfo()
 
     Scaffold(

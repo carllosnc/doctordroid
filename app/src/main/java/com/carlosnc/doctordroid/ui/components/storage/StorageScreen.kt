@@ -108,7 +108,7 @@ fun StorageUsageCard(storageInfo: StorageInfo) {
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+            containerColor = Color.Transparent
         )
     ) {
         Column(
@@ -310,7 +310,9 @@ fun FileTypeItem(fileType: FileTypeInfo, totalBytes: Long) {
     LaunchedEffect(Unit) {
         animationPlayed = true
     }
-    
+
+    val primaryColor = MaterialTheme.colorScheme.primary
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -321,13 +323,13 @@ fun FileTypeItem(fileType: FileTypeInfo, totalBytes: Long) {
             modifier = Modifier
                 .size(44.dp)
                 .clip(CircleShape)
-                .background(fileType.color.copy(alpha = 0.15f)),
+                .background(primaryColor.copy(alpha = 0.15f)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = fileType.icon,
                 contentDescription = null,
-                tint = fileType.color,
+                tint = primaryColor,
                 modifier = Modifier.size(22.dp)
             )
         }
@@ -349,7 +351,7 @@ fun FileTypeItem(fileType: FileTypeInfo, totalBytes: Long) {
                     text = formatSize(fileType.sizeBytes),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
+                    color = primaryColor
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -359,7 +361,7 @@ fun FileTypeItem(fileType: FileTypeInfo, totalBytes: Long) {
                     .fillMaxWidth()
                     .height(6.dp)
                     .clip(CircleShape),
-                color = fileType.color,
+                color = primaryColor,
                 trackColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
                 strokeCap = StrokeCap.Round
             )
@@ -370,18 +372,17 @@ fun FileTypeItem(fileType: FileTypeInfo, totalBytes: Long) {
 data class FileTypeInfo(
     val name: String,
     val sizeBytes: Long,
-    val icon: ImageVector,
-    val color: Color
+    val icon: ImageVector
 )
 
 fun getFileTypeUsage(): List<FileTypeInfo> {
     return listOf(
-        FileTypeInfo("Apps", 32L * 1024 * 1024 * 1024, Icons.Default.Apps, Color(0xFF607D8B)),
-        FileTypeInfo("Images", 15L * 1024 * 1024 * 1024, Icons.Default.Image, Color(0xFF4CAF50)),
-        FileTypeInfo("Videos", 25L * 1024 * 1024 * 1024, Icons.Default.Movie, Color(0xFFE91E63)),
-        FileTypeInfo("Audio", 5L * 1024 * 1024 * 1024, Icons.Default.MusicNote, Color(0xFF2196F3)),
-        FileTypeInfo("Documents", 2L * 1024 * 1024 * 1024, Icons.Default.Description, Color(0xFFFF9800)),
-        FileTypeInfo("Other", 8L * 1024 * 1024 * 1024, Icons.Default.Folder, Color(0xFF9C27B0))
+        FileTypeInfo("Apps", 32L * 1024 * 1024 * 1024, Icons.Default.Apps),
+        FileTypeInfo("Images", 15L * 1024 * 1024 * 1024, Icons.Default.Image),
+        FileTypeInfo("Videos", 25L * 1024 * 1024 * 1024, Icons.Default.Movie),
+        FileTypeInfo("Audio", 5L * 1024 * 1024 * 1024, Icons.Default.MusicNote),
+        FileTypeInfo("Documents", 2L * 1024 * 1024 * 1024, Icons.Default.Description),
+        FileTypeInfo("Other", 8L * 1024 * 1024 * 1024, Icons.Default.Folder)
     )
 }
 

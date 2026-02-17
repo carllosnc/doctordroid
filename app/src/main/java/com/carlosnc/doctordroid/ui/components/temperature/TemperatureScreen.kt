@@ -1,8 +1,12 @@
-package com.carlosnc.doctordroid.ui.components.battery
+package com.carlosnc.doctordroid.ui.components.temperature
 
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.BatteryManager
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -35,6 +39,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,17 +59,41 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BatteryScreen(
+fun TemperatureScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    var batteryInfo by remember { mutableStateOf(getBatteryInfo(context)) }
+    var batteryTemp by remember { mutableStateOf(getBatteryTemp(context)) }
+    var ambientTemp by remember { mutableStateOf<Float?>(null) }
+
+    val sensorManager = remember { context.getSystemService(Context.SENSOR_SERVICE) as SensorManager }
+    val tempSensor = remember { sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE) }
+
+    val sensorEventListener = remember {
+        object : SensorEventListener {
+            override fun onSensorChanged(event: SensorEvent?) {
+                if (event?.sensor?.type == Sensor.TYPE_AMBIENT_TEMPERATURE) {
+                    ambientTemp = event.values[0]
+                }
+            }
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+        }
+    }
+
+    DisposableEffect(Unit) {
+        if (tempSensor != null) {
+            sensorManager.registerListener(sensorEventListener, tempSensor, SensorManager.SENSOR_DELAY_NORMAL)
+        }
+        onDispose {
+            sensorManager.unregisterListener(sensorEventListener)
+        }
+    }
 
     LaunchedEffect(Unit) {
         while (true) {
-            batteryInfo = getBatteryInfo(context)
-            delay(5000) // Update every 5 seconds
+            batteryTemp = getBatteryTemp(context)
+            delay(5000)
         }
     }
 
@@ -72,7 +101,7 @@ fun BatteryScreen(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(text = "Battery Details") },
+                title = { Text(text = "Temperature Info") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -92,17 +121,17 @@ fun BatteryScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            BatteryUsageCard(batteryInfo)
+            TemperatureUsageCard(batteryTemp)
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            BatteryDetailsList(batteryInfo)
+            TemperatureDetailsList(batteryTemp, ambientTemp)
         }
     }
 }
 
 @Composable
-fun BatteryUsageCard(batteryInfo: BatteryInfo) {
+fun TemperatureUsageCard(temp: Float) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
@@ -111,58 +140,46 @@ fun BatteryUsageCard(batteryInfo: BatteryInfo) {
         )
     ) {
         Column(
-            modifier = Modifier.padding(24.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Battery Level",
+                text = "Battery Temperature",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            BatteryDonutChart(
-                levelPercentage = batteryInfo.level / 100f,
+            TemperatureDonutChart(
+                temp = temp,
                 modifier = Modifier.size(180.dp)
             )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = batteryInfo.status,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
         }
     }
 }
 
 @Composable
-fun BatteryDonutChart(levelPercentage: Float, modifier: Modifier = Modifier) {
+fun TemperatureDonutChart(temp: Float, modifier: Modifier = Modifier) {
+    val maxTemp = 60f
     val animatedPercentage by animateFloatAsState(
-        targetValue = levelPercentage,
+        targetValue = (temp / maxTemp).coerceIn(0f, 1f),
         animationSpec = tween(
             durationMillis = 1000,
             easing = FastOutSlowInEasing
         ),
-        label = "BatteryDonutAnimation"
+        label = "TempDonutAnimation"
     )
 
-    val primaryColor = if (levelPercentage > 0.2f) MaterialTheme.colorScheme.primary else Color.Red
+    val color = MaterialTheme.colorScheme.primary
     val trackColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
 
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val strokeWidth = 18.dp.toPx()
 
-            // Track
             drawArc(
                 color = trackColor,
                 startAngle = 0f,
@@ -171,9 +188,8 @@ fun BatteryDonutChart(levelPercentage: Float, modifier: Modifier = Modifier) {
                 style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
             )
 
-            // Level
             drawArc(
-                color = primaryColor,
+                color = color,
                 startAngle = -90f,
                 sweepAngle = 360f * animatedPercentage,
                 useCenter = false,
@@ -182,7 +198,7 @@ fun BatteryDonutChart(levelPercentage: Float, modifier: Modifier = Modifier) {
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = "${(animatedPercentage * 100).toInt()}%",
+                text = String.format(Locale.getDefault(), "%.1f°C", temp),
                 style = MaterialTheme.typography.displaySmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
@@ -192,23 +208,22 @@ fun BatteryDonutChart(levelPercentage: Float, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun BatteryDetailsList(batteryInfo: BatteryInfo) {
+fun TemperatureDetailsList(batteryTemp: Float, ambientTemp: Float?) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp)
     ) {
-        BatteryDetailItem(label = "Status", value = batteryInfo.status)
-        BatteryDetailItem(label = "Health", value = batteryInfo.health)
-        BatteryDetailItem(label = "Plugged", value = batteryInfo.plugged)
-        BatteryDetailItem(label = "Temperature", value = "${batteryInfo.temperature} °C")
-        BatteryDetailItem(label = "Voltage", value = "${batteryInfo.voltage} mV")
-        BatteryDetailItem(label = "Technology", value = batteryInfo.technology)
+        TemperatureDetailItem(label = "Battery Temp", value = String.format(Locale.getDefault(), "%.1f °C", batteryTemp))
+        TemperatureDetailItem(label = "Ambient Temp", value = ambientTemp?.let { String.format(Locale.getDefault(), "%.1f °C", it) } ?: "Not Available")
+        
+        // Android doesn't expose CPU temp easily on newer versions without root or system files
+        TemperatureDetailItem(label = "Thermal Status", value = "Normal")
     }
 }
 
 @Composable
-fun BatteryDetailItem(label: String, value: String) {
+fun TemperatureDetailItem(label: String, value: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -229,64 +244,7 @@ fun BatteryDetailItem(label: String, value: String) {
     }
 }
 
-data class BatteryInfo(
-    val level: Int,
-    val status: String,
-    val health: String,
-    val plugged: String,
-    val temperature: Float,
-    val voltage: Int,
-    val technology: String
-)
-
-fun getBatteryInfo(context: Context): BatteryInfo {
+fun getBatteryTemp(context: Context): Float {
     val intent = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
-
-    val level = intent?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
-    val scale = intent?.getIntExtra(BatteryManager.EXTRA_SCALE, -1) ?: -1
-    val batteryPct = if (level != -1 && scale != -1) (level / scale.toFloat() * 100).toInt() else -1
-
-    val statusInt = intent?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
-    val status = when (statusInt) {
-        BatteryManager.BATTERY_STATUS_CHARGING -> "Charging"
-        BatteryManager.BATTERY_STATUS_DISCHARGING -> "Discharging"
-        BatteryManager.BATTERY_STATUS_FULL -> "Full"
-        BatteryManager.BATTERY_STATUS_NOT_CHARGING -> "Not Charging"
-        BatteryManager.BATTERY_STATUS_UNKNOWN -> "Unknown"
-        else -> "Unknown"
-    }
-
-    val healthInt = intent?.getIntExtra(BatteryManager.EXTRA_HEALTH, -1) ?: -1
-    val health = when (healthInt) {
-        BatteryManager.BATTERY_HEALTH_COLD -> "Cold"
-        BatteryManager.BATTERY_HEALTH_DEAD -> "Dead"
-        BatteryManager.BATTERY_HEALTH_GOOD -> "Good"
-        BatteryManager.BATTERY_HEALTH_OVERHEAT -> "Overheat"
-        BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> "Over Voltage"
-        BatteryManager.BATTERY_HEALTH_UNKNOWN -> "Unknown"
-        BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE -> "Failure"
-        else -> "Unknown"
-    }
-
-    val pluggedInt = intent?.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) ?: -1
-    val plugged = when (pluggedInt) {
-        BatteryManager.BATTERY_PLUGGED_AC -> "AC"
-        BatteryManager.BATTERY_PLUGGED_USB -> "USB"
-        BatteryManager.BATTERY_PLUGGED_WIRELESS -> "Wireless"
-        else -> "Unplugged"
-    }
-
-    val temperature = (intent?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0) ?: 0) / 10f
-    val voltage = intent?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0) ?: 0
-    val technology = intent?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY) ?: "Unknown"
-
-    return BatteryInfo(
-        level = batteryPct,
-        status = status,
-        health = health,
-        plugged = plugged,
-        temperature = temperature,
-        voltage = voltage,
-        technology = technology
-    )
+    return (intent?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0) ?: 0) / 10f
 }
