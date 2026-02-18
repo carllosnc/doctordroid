@@ -67,12 +67,17 @@ class FloatingMonitorService : Service(), LifecycleOwner, ViewModelStoreOwner, S
     private val store = ViewModelStore()
     private val savedStateRegistryController = SavedStateRegistryController.create(this)
 
+    companion object {
+        var isRunning = false
+    }
+
     override val lifecycle: Lifecycle get() = lifecycleRegistry
     override val viewModelStore: ViewModelStore get() = store
     override val savedStateRegistry: SavedStateRegistry get() = savedStateRegistryController.savedStateRegistry
 
     override fun onCreate() {
         super.onCreate()
+        isRunning = true
         savedStateRegistryController.performRestore(null)
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START)
@@ -212,6 +217,7 @@ class FloatingMonitorService : Service(), LifecycleOwner, ViewModelStoreOwner, S
 
     override fun onDestroy() {
         super.onDestroy()
+        isRunning = false
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
         serviceJob.cancel()
