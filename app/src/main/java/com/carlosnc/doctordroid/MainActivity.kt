@@ -1,7 +1,5 @@
 package com.carlosnc.doctordroid
 
-import android.app.ActivityManager
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -29,7 +27,7 @@ class MainActivity : ComponentActivity() {
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (Settings.canDrawOverlays(this)) {
-                toggleFloatingMonitor()
+                startFloatingMonitor()
             }
         }
     }
@@ -38,7 +36,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         
-        isMonitorActive = isServiceRunning(FloatingMonitorService::class.java)
+        isMonitorActive = FloatingMonitorService.isRunning
         
         setContent {
             DoctordroidTheme {
@@ -65,16 +63,8 @@ class MainActivity : ComponentActivity() {
                 )
                 overlayPermissionLauncher.launch(intent)
             } else {
-                toggleFloatingMonitor()
+                startFloatingMonitor()
             }
-        } else {
-            toggleFloatingMonitor()
-        }
-    }
-
-    private fun toggleFloatingMonitor() {
-        if (isServiceRunning(FloatingMonitorService::class.java)) {
-            stopFloatingMonitor()
         } else {
             startFloatingMonitor()
         }
@@ -94,16 +84,6 @@ class MainActivity : ComponentActivity() {
         val intent = Intent(this, FloatingMonitorService::class.java)
         stopService(intent)
         isMonitorActive = false
-    }
-
-    private fun isServiceRunning(serviceClass: Class<*>): Boolean {
-        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        for (service in manager.getRunningServices(Int.MAX_VALUE)) {
-            if (serviceClass.name == service.service.className) {
-                return true
-            }
-        }
-        return false
     }
 }
 
