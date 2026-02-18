@@ -8,9 +8,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.carlosnc.doctordroid.ui.components.applications.ApplicationsScreen
+import com.carlosnc.doctordroid.ui.components.audio.AudioScreen
 import com.carlosnc.doctordroid.ui.components.battery.BatteryScreen
+import com.carlosnc.doctordroid.ui.components.camera.CameraScreen
 import com.carlosnc.doctordroid.ui.components.cpu.CpuScreen
 import com.carlosnc.doctordroid.ui.components.device.DeviceScreen
+import com.carlosnc.doctordroid.ui.components.gpu.GpuScreen
 import com.carlosnc.doctordroid.ui.components.memory.MemoryScreen
 import com.carlosnc.doctordroid.ui.components.network.NetworkScreen
 import com.carlosnc.doctordroid.ui.components.storage.StorageScreen
@@ -34,6 +37,12 @@ object Battery
 object Cpu
 
 @Serializable
+object Gpu
+
+@Serializable
+object Camera
+
+@Serializable
 object Device
 
 @Serializable
@@ -45,9 +54,14 @@ object Applications
 @Serializable
 object Network
 
+@Serializable
+object Audio
+
 @Composable
 fun AppNavHost(
     navController: NavHostController,
+    isMonitorActive: Boolean,
+    onToggleFloatingMonitor: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -81,14 +95,19 @@ fun AppNavHost(
     ) {
         composable<Home> {
             HomeScreen(
+                isMonitorActive = isMonitorActive,
                 onStorageClick = { navController.navigate(Storage) },
                 onMemoryClick = { navController.navigate(Memory) },
                 onBatteryClick = { navController.navigate(Battery) },
                 onCpuClick = { navController.navigate(Cpu) },
+                onGpuClick = { navController.navigate(Gpu) },
+                onCameraClick = { navController.navigate(Camera) },
                 onDeviceClick = { navController.navigate(Device) },
                 onTemperatureClick = { navController.navigate(Temperature) },
                 onApplicationsClick = { navController.navigate(Applications) },
-                onNetworkClick = { navController.navigate(Network) }
+                onNetworkClick = { navController.navigate(Network) },
+                onAudioClick = { navController.navigate(Audio) },
+                onToggleFloatingMonitor = onToggleFloatingMonitor
             )
         }
         composable<Storage> {
@@ -103,6 +122,12 @@ fun AppNavHost(
         composable<Cpu> {
             CpuScreen(onBackClick = { navController.popBackStack() })
         }
+        composable<Gpu> {
+            GpuScreen(onBackClick = { navController.popBackStack() })
+        }
+        composable<Camera> {
+            CameraScreen(onBackClick = { navController.popBackStack() })
+        }
         composable<Device> {
             DeviceScreen(onBackClick = { navController.popBackStack() })
         }
@@ -114,6 +139,9 @@ fun AppNavHost(
         }
         composable<Network> {
             NetworkScreen(onBackClick = { navController.popBackStack() })
+        }
+        composable<Audio> {
+            AudioScreen(onBackClick = { navController.popBackStack() })
         }
     }
 }

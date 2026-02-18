@@ -1,4 +1,4 @@
-package com.carlosnc.doctordroid.ui.components.storage
+package com.carlosnc.doctordroid.ui.components.audio
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -13,14 +13,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.SdCard
+import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,15 +27,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun StorageCard(
+fun AudioCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val storageInfo = remember { getStorageInfo() }
-    val usedFormatted = formatSize(storageInfo.usedBytes)
-    val totalFormatted = formatSize(storageInfo.totalBytes)
-    val percentUsed = (storageInfo.usedPercentage * 100).toInt()
-
     Card(
         onClick = onClick,
         modifier = modifier,
@@ -60,28 +54,28 @@ fun StorageCard(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Default.SdCard,
+                    imageVector = Icons.Default.VolumeUp,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
                 )
             }
-
+            
             Spacer(modifier = Modifier.width(16.dp))
-
+            
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Storage Details",
+                    text = "Audio & Sound",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "$usedFormatted used of $totalFormatted ($percentUsed%)",
+                    text = "Volume, sources & info",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-
+            
             Icon(
                 imageVector = Icons.Default.ChevronRight,
                 contentDescription = null,

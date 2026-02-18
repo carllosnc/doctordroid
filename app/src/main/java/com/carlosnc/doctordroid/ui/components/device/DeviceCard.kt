@@ -28,8 +28,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun DeviceCard(modifier: Modifier = Modifier) {
+fun DeviceCard(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Card(
+        onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(

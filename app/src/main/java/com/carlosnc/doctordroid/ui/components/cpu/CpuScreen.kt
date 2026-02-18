@@ -270,7 +270,7 @@ fun CpuDetailItem(label: String, value: String) {
     }
 }
 
-private suspend fun getCpuUsage(): Float = withContext(Dispatchers.IO) {
+suspend fun getCpuUsage(): Float = withContext(Dispatchers.IO) {
     try {
         val reader = RandomAccessFile("/proc/stat", "r")
         var line = reader.readLine()
