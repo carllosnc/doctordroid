@@ -9,12 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Monitor
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -23,7 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -87,56 +86,63 @@ fun HomeScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
-            val cardModifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(24.dp))
+            val cardModifier = Modifier.fillMaxWidth()
 
             DeviceCard(
                 onClick = onDeviceClick,
                 modifier = cardModifier
             )
+
             StorageCard(
                 onClick = onStorageClick,
                 modifier = cardModifier
             )
+
             MemoryCard(
                 modifier = cardModifier
                     .clickable { onMemoryClick() }
             )
+
             NetworkCard(
                 modifier = cardModifier
                     .clickable { onNetworkClick() }
             )
+
             AudioCard(
                 onClick = onAudioClick,
                 modifier = cardModifier
             )
+
             BatteryCard(
                 modifier = cardModifier
                     .clickable { onBatteryClick() }
             )
+
             CpuCard(
                 modifier = cardModifier
                     .clickable { onCpuClick() }
             )
+
             GpuCard(
                 onClick = onGpuClick,
                 modifier = cardModifier
             )
+
             CameraCard(
                 onClick = onCameraClick,
                 modifier = cardModifier
             )
+
             TemperatureCard(
                 modifier = cardModifier
                     .clickable { onTemperatureClick() }
             )
+            
             // Extra padding at the bottom for scrolling
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
