@@ -163,8 +163,8 @@ fun AudioScreen(
 @Composable
 fun AudioSectionHeader(title: String) {
     Text(
-        text = title,
-        style = MaterialTheme.typography.titleMedium,
+        text = title.uppercase(),
+        style = MaterialTheme.typography.labelMedium,
         fontWeight = FontWeight.Bold,
         color = MaterialTheme.colorScheme.primary,
         modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
