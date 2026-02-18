@@ -7,7 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.carlosnc.doctordroid.ui.components.applications.ApplicationsScreen
 import com.carlosnc.doctordroid.ui.components.audio.AudioScreen
 import com.carlosnc.doctordroid.ui.components.battery.BatteryScreen
 import com.carlosnc.doctordroid.ui.components.camera.CameraScreen
@@ -19,6 +18,7 @@ import com.carlosnc.doctordroid.ui.components.network.NetworkScreen
 import com.carlosnc.doctordroid.ui.components.storage.StorageScreen
 import com.carlosnc.doctordroid.ui.components.temperature.TemperatureScreen
 import com.carlosnc.doctordroid.ui.screens.HomeScreen
+import com.carlosnc.doctordroid.ui.screens.QuickControlScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -49,13 +49,13 @@ object Device
 object Temperature
 
 @Serializable
-object Applications
-
-@Serializable
 object Network
 
 @Serializable
 object Audio
+
+@Serializable
+object QuickControl
 
 @Composable
 fun AppNavHost(
@@ -104,11 +104,14 @@ fun AppNavHost(
                 onCameraClick = { navController.navigate(Camera) },
                 onDeviceClick = { navController.navigate(Device) },
                 onTemperatureClick = { navController.navigate(Temperature) },
-                onApplicationsClick = { navController.navigate(Applications) },
                 onNetworkClick = { navController.navigate(Network) },
                 onAudioClick = { navController.navigate(Audio) },
+                onQuickControlClick = { navController.navigate(QuickControl) },
                 onToggleFloatingMonitor = onToggleFloatingMonitor
             )
+        }
+        composable<QuickControl> {
+            QuickControlScreen(onBackClick = { navController.popBackStack() })
         }
         composable<Storage> {
             StorageScreen(onBackClick = { navController.popBackStack() })
@@ -133,9 +136,6 @@ fun AppNavHost(
         }
         composable<Temperature> {
             TemperatureScreen(onBackClick = { navController.popBackStack() })
-        }
-        composable<Applications> {
-            ApplicationsScreen(onBackClick = { navController.popBackStack() })
         }
         composable<Network> {
             NetworkScreen(onBackClick = { navController.popBackStack() })
