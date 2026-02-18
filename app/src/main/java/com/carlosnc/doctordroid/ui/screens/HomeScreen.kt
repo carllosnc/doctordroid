@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Monitor
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,7 +27,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.carlosnc.doctordroid.R
-import com.carlosnc.doctordroid.ui.components.applications.ApplicationsCard
 import com.carlosnc.doctordroid.ui.components.audio.AudioCard
 import com.carlosnc.doctordroid.ui.components.battery.BatteryCard
 import com.carlosnc.doctordroid.ui.components.camera.CameraCard
@@ -50,9 +50,9 @@ fun HomeScreen(
     onCameraClick: () -> Unit,
     onDeviceClick: () -> Unit,
     onTemperatureClick: () -> Unit,
-    onApplicationsClick: () -> Unit,
     onNetworkClick: () -> Unit,
     onAudioClick: () -> Unit,
+    onQuickControlClick: () -> Unit,
     onToggleFloatingMonitor: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -64,6 +64,12 @@ fun HomeScreen(
                     Text(text = stringResource(id = R.string.app_name))
                 },
                 actions = {
+                    IconButton(onClick = onQuickControlClick) {
+                        Icon(
+                            imageVector = Icons.Default.Tune,
+                            contentDescription = "Quick Controls"
+                        )
+                    }
                     IconButton(onClick = onToggleFloatingMonitor) {
                         Icon(
                             imageVector = Icons.Default.Monitor,
@@ -126,10 +132,6 @@ fun HomeScreen(
             TemperatureCard(
                 modifier = cardModifier
                     .clickable { onTemperatureClick() }
-            )
-            ApplicationsCard(
-                modifier = cardModifier
-                    .clickable { onApplicationsClick() }
             )
             // Extra padding at the bottom for scrolling
             Spacer(modifier = Modifier.height(16.dp))
