@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -67,14 +68,15 @@ fun HomeScreen(
                     IconButton(onClick = onQuickControlClick) {
                         Icon(
                             imageVector = Icons.Default.Tune,
-                            contentDescription = "Quick Controls"
+                            contentDescription = "Quick Controls",
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                     IconButton(onClick = onToggleFloatingMonitor) {
                         Icon(
                             imageVector = Icons.Default.Monitor,
                             contentDescription = "Toggle Floating Monitor",
-                            tint = if (isMonitorActive) Color.Red else Color.Gray
+                            tint = if (isMonitorActive) Color.Red else MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
