@@ -5,10 +5,14 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,9 +23,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -42,7 +44,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -103,6 +104,8 @@ fun BatteryScreen(
 
 @Composable
 fun BatteryUsageCard(batteryInfo: BatteryInfo) {
+    val isCharging = batteryInfo.status == "Charging"
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
@@ -124,6 +127,7 @@ fun BatteryUsageCard(batteryInfo: BatteryInfo) {
 
             BatteryDonutChart(
                 levelPercentage = batteryInfo.level / 100f,
+                isCharging = isCharging,
                 modifier = Modifier.size(180.dp)
             )
 
@@ -145,7 +149,11 @@ fun BatteryUsageCard(batteryInfo: BatteryInfo) {
 }
 
 @Composable
-fun BatteryDonutChart(levelPercentage: Float, modifier: Modifier = Modifier) {
+fun BatteryDonutChart(
+    levelPercentage: Float,
+    isCharging: Boolean,
+    modifier: Modifier = Modifier
+) {
     val animatedPercentage by animateFloatAsState(
         targetValue = levelPercentage,
         animationSpec = tween(
@@ -153,6 +161,28 @@ fun BatteryDonutChart(levelPercentage: Float, modifier: Modifier = Modifier) {
             easing = FastOutSlowInEasing
         ),
         label = "BatteryDonutAnimation"
+    )
+
+    val infiniteTransition = rememberInfiniteTransition(label = "ChargingTransition")
+
+    val chargingPulse by infiniteTransition.animateFloat(
+        initialValue = 0.4f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1500, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "ChargingPulse"
+    )
+
+    val chargingRotation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "ChargingRotation"
     )
 
     val primaryColor = if (levelPercentage > 0.2f) MaterialTheme.colorScheme.primary else Color.Red
@@ -173,19 +203,30 @@ fun BatteryDonutChart(levelPercentage: Float, modifier: Modifier = Modifier) {
 
             // Level
             drawArc(
-                color = primaryColor,
+                color = if (isCharging) primaryColor.copy(alpha = chargingPulse) else primaryColor,
                 startAngle = -90f,
                 sweepAngle = 360f * animatedPercentage,
                 useCenter = false,
                 style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
             )
+
+            // Charging glow / orbit
+            if (isCharging) {
+                drawArc(
+                    color = primaryColor.copy(alpha = 0.5f),
+                    startAngle = chargingRotation - 90f,
+                    sweepAngle = 45f,
+                    useCenter = false,
+                    style = Stroke(width = strokeWidth + 4.dp.toPx(), cap = StrokeCap.Round)
+                )
+            }
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = "${(animatedPercentage * 100).toInt()}%",
                 style = MaterialTheme.typography.displaySmall,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }
@@ -224,7 +265,8 @@ fun BatteryDetailItem(label: String, value: String) {
         Text(
             text = value,
             style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.primary
         )
     }
 }
