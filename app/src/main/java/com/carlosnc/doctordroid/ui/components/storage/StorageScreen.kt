@@ -323,7 +323,7 @@ fun FileTypeItem(fileType: FileTypeInfo, totalBytes: Long) {
             modifier = Modifier
                 .size(44.dp)
                 .clip(CircleShape)
-                .background(primaryColor.copy(alpha = 0.15f)),
+                .background(primaryColor.copy(alpha = 0.1f)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
