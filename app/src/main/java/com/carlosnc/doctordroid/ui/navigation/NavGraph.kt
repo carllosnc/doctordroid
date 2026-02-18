@@ -13,6 +13,7 @@ import com.carlosnc.doctordroid.ui.components.camera.CameraScreen
 import com.carlosnc.doctordroid.ui.components.cpu.CpuScreen
 import com.carlosnc.doctordroid.ui.components.device.DeviceScreen
 import com.carlosnc.doctordroid.ui.components.gpu.GpuScreen
+import com.carlosnc.doctordroid.ui.components.health.HealthCheckScreen
 import com.carlosnc.doctordroid.ui.components.memory.MemoryScreen
 import com.carlosnc.doctordroid.ui.components.network.NetworkScreen
 import com.carlosnc.doctordroid.ui.components.storage.StorageScreen
@@ -56,6 +57,9 @@ object Audio
 
 @Serializable
 object QuickControl
+
+@Serializable
+object HealthCheck
 
 @Composable
 fun AppNavHost(
@@ -107,6 +111,7 @@ fun AppNavHost(
                 onNetworkClick = { navController.navigate(Network) },
                 onAudioClick = { navController.navigate(Audio) },
                 onQuickControlClick = { navController.navigate(QuickControl) },
+                onHealthCheckClick = { navController.navigate(HealthCheck) },
                 onToggleFloatingMonitor = onToggleFloatingMonitor
             )
         }
@@ -142,6 +147,9 @@ fun AppNavHost(
         }
         composable<Audio> {
             AudioScreen(onBackClick = { navController.popBackStack() })
+        }
+        composable<HealthCheck> {
+            HealthCheckScreen(onBackClick = { navController.popBackStack() })
         }
     }
 }
