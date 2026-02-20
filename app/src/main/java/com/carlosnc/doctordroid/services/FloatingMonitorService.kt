@@ -46,8 +46,7 @@ import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
-import com.carlosnc.doctordroid.ui.components.cpu.getCpuUsage
-import com.carlosnc.doctordroid.ui.components.memory.getMemoryInfo
+import com.carlosnc.doctordroid.ui.components.battery.getBatteryTemperature
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -55,6 +54,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import android.view.Choreographer
+import java.util.Locale
 
 class FloatingMonitorService : Service(), LifecycleOwner, ViewModelStoreOwner, SavedStateRegistryOwner {
 
@@ -152,17 +152,14 @@ class FloatingMonitorService : Service(), LifecycleOwner, ViewModelStoreOwner, S
 
     @Composable
     private fun FloatingMonitorContent(onDrag: (Float, Float) -> Unit) {
-        var cpuUsage by remember { mutableStateOf(0) }
-        var ramUsage by remember { mutableStateOf(0) }
         var fps by remember { mutableStateOf(0) }
+        var temperature by remember { mutableStateOf(0f) }
 
-        // Update CPU and RAM
+        // Update Temperature
         LaunchedEffect(Unit) {
             while (isActive) {
-                cpuUsage = (getCpuUsage() * 100).toInt()
-                val memInfo = getMemoryInfo(this@FloatingMonitorService)
-                ramUsage = (memInfo.usedPercentage * 100).toInt()
-                delay(1000)
+                temperature = getBatteryTemperature(this@FloatingMonitorService)
+                delay(5000)
             }
         }
 
@@ -198,9 +195,8 @@ class FloatingMonitorService : Service(), LifecycleOwner, ViewModelStoreOwner, S
             shape = RoundedCornerShape(8.dp)
         ) {
             Column(modifier = Modifier.padding(8.dp)) {
-                MonitorText("CPU: $cpuUsage%")
-                MonitorText("RAM: $ramUsage%")
                 MonitorText("FPS: $fps")
+                MonitorText(String.format(Locale.getDefault(), "TEMP: %.1f°C", temperature))
             }
         }
     }
