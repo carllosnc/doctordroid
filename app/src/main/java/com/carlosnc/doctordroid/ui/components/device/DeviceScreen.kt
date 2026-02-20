@@ -60,6 +60,7 @@ import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material.icons.filled.SettingsBackupRestore
 import androidx.compose.material.icons.filled.SimCard
 import androidx.compose.material.icons.filled.Timer
+import com.carlosnc.doctordroid.ui.components.PageTitle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,7 +76,7 @@ fun DeviceScreen(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(text = "Device Info") },
+               title = { PageTitle("Device info") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -98,7 +99,7 @@ fun DeviceScreen(
             
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp),
-                thickness = 0.5.dp,
+                thickness = 1.dp,
                 color = MaterialTheme.colorScheme.outlineVariant
             )
             

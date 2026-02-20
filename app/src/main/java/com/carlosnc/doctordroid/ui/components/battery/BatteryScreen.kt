@@ -1,16 +1,7 @@
 package com.carlosnc.doctordroid.ui.components.battery
 
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.os.BatteryManager
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -50,6 +41,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.carlosnc.doctordroid.ui.components.PageTitle
 import kotlinx.coroutines.delay
 import java.util.Locale
 
@@ -60,12 +52,12 @@ fun BatteryScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    var batteryInfo by remember { mutableStateOf(getBatteryInfo(context)) }
+    var batteryInfo by remember { mutableStateOf<BatteryInfo>(getBatteryInfo(context)) }
 
     LaunchedEffect(Unit) {
         while (true) {
             batteryInfo = getBatteryInfo(context)
-            delay(5000) // Update every 5 seconds
+            delay(5000)
         }
     }
 
@@ -73,7 +65,7 @@ fun BatteryScreen(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(text = "Battery Details") },
+                title = { PageTitle(text = "Battery Status") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -104,8 +96,6 @@ fun BatteryScreen(
 
 @Composable
 fun BatteryUsageCard(batteryInfo: BatteryInfo) {
-    val isCharging = batteryInfo.status == "Charging"
-
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
@@ -114,11 +104,13 @@ fun BatteryUsageCard(batteryInfo: BatteryInfo) {
         )
     ) {
         Column(
-            modifier = Modifier.padding(24.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Battery Level",
+                text = "Current Level",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
@@ -126,36 +118,17 @@ fun BatteryUsageCard(batteryInfo: BatteryInfo) {
             Spacer(modifier = Modifier.height(24.dp))
 
             BatteryDonutChart(
-                levelPercentage = batteryInfo.level / 100f,
-                isCharging = isCharging,
+                percentage = batteryInfo.level.toFloat() / 100f,
                 modifier = Modifier.size(180.dp)
             )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = batteryInfo.status,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
         }
     }
 }
 
 @Composable
-fun BatteryDonutChart(
-    levelPercentage: Float,
-    isCharging: Boolean,
-    modifier: Modifier = Modifier
-) {
+fun BatteryDonutChart(percentage: Float, modifier: Modifier = Modifier) {
     val animatedPercentage by animateFloatAsState(
-        targetValue = levelPercentage,
+        targetValue = percentage,
         animationSpec = tween(
             durationMillis = 1000,
             easing = FastOutSlowInEasing
@@ -163,36 +136,17 @@ fun BatteryDonutChart(
         label = "BatteryDonutAnimation"
     )
 
-    val infiniteTransition = rememberInfiniteTransition(label = "ChargingTransition")
-
-    val chargingPulse by infiniteTransition.animateFloat(
-        initialValue = 0.4f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1500, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "ChargingPulse"
-    )
-
-    val chargingRotation by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(2000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "ChargingRotation"
-    )
-
-    val primaryColor = if (levelPercentage > 0.2f) MaterialTheme.colorScheme.primary else Color.Red
+    val color = when {
+        percentage > 0.6f -> Color(0xFF4CAF50)
+        percentage > 0.2f -> Color(0xFFFFC107)
+        else -> Color(0xFFF44336)
+    }
     val trackColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
 
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val strokeWidth = 12.dp.toPx()
 
-            // Track
             drawArc(
                 color = trackColor,
                 startAngle = 0f,
@@ -201,32 +155,20 @@ fun BatteryDonutChart(
                 style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
             )
 
-            // Level
             drawArc(
-                color = if (isCharging) primaryColor.copy(alpha = chargingPulse) else primaryColor,
+                color = color,
                 startAngle = -90f,
                 sweepAngle = 360f * animatedPercentage,
                 useCenter = false,
                 style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
             )
-
-            // Charging glow / orbit
-            if (isCharging) {
-                drawArc(
-                    color = primaryColor.copy(alpha = 0.5f),
-                    startAngle = chargingRotation - 90f,
-                    sweepAngle = 45f,
-                    useCenter = false,
-                    style = Stroke(width = strokeWidth + 4.dp.toPx(), cap = StrokeCap.Round)
-                )
-            }
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = "${(animatedPercentage * 100).toInt()}%",
                 style = MaterialTheme.typography.displaySmall,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }
@@ -239,12 +181,13 @@ fun BatteryDetailsList(batteryInfo: BatteryInfo) {
             .fillMaxWidth()
             .padding(horizontal = 8.dp)
     ) {
-        BatteryDetailItem(label = "Status", value = batteryInfo.status)
         BatteryDetailItem(label = "Health", value = batteryInfo.health)
+        BatteryDetailItem(label = "Status", value = batteryInfo.status)
         BatteryDetailItem(label = "Plugged", value = batteryInfo.plugged)
-        BatteryDetailItem(label = "Temperature", value = "${batteryInfo.temperature} °C")
-        BatteryDetailItem(label = "Voltage", value = "${batteryInfo.voltage} mV")
+        BatteryDetailItem(label = "Capacity", value = "${batteryInfo.capacity} mAh")
         BatteryDetailItem(label = "Technology", value = batteryInfo.technology)
+        BatteryDetailItem(label = "Voltage", value = String.format(Locale.getDefault(), "%.1f V", batteryInfo.voltage / 1000f))
+        BatteryDetailItem(label = "Temperature", value = String.format(Locale.getDefault(), "%.1f °C", batteryInfo.temperature / 10f))
     }
 }
 
@@ -265,70 +208,7 @@ fun BatteryDetailItem(label: String, value: String) {
         Text(
             text = value,
             style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.primary
+            fontWeight = FontWeight.SemiBold
         )
     }
-}
-
-data class BatteryInfo(
-    val level: Int,
-    val status: String,
-    val health: String,
-    val plugged: String,
-    val temperature: Float,
-    val voltage: Int,
-    val technology: String
-)
-
-fun getBatteryInfo(context: Context): BatteryInfo {
-    val intent = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
-
-    val level = intent?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
-    val scale = intent?.getIntExtra(BatteryManager.EXTRA_SCALE, -1) ?: -1
-    val batteryPct = if (level != -1 && scale != -1) (level / scale.toFloat() * 100).toInt() else -1
-
-    val statusInt = intent?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
-    val status = when (statusInt) {
-        BatteryManager.BATTERY_STATUS_CHARGING -> "Charging"
-        BatteryManager.BATTERY_STATUS_DISCHARGING -> "Discharging"
-        BatteryManager.BATTERY_STATUS_FULL -> "Full"
-        BatteryManager.BATTERY_STATUS_NOT_CHARGING -> "Not Charging"
-        BatteryManager.BATTERY_STATUS_UNKNOWN -> "Unknown"
-        else -> "Unknown"
-    }
-
-    val healthInt = intent?.getIntExtra(BatteryManager.EXTRA_HEALTH, -1) ?: -1
-    val health = when (healthInt) {
-        BatteryManager.BATTERY_HEALTH_COLD -> "Cold"
-        BatteryManager.BATTERY_HEALTH_DEAD -> "Dead"
-        BatteryManager.BATTERY_HEALTH_GOOD -> "Good"
-        BatteryManager.BATTERY_HEALTH_OVERHEAT -> "Overheat"
-        BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> "Over Voltage"
-        BatteryManager.BATTERY_HEALTH_UNKNOWN -> "Unknown"
-        BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE -> "Failure"
-        else -> "Unknown"
-    }
-
-    val pluggedInt = intent?.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) ?: -1
-    val plugged = when (pluggedInt) {
-        BatteryManager.BATTERY_PLUGGED_AC -> "AC"
-        BatteryManager.BATTERY_PLUGGED_USB -> "USB"
-        BatteryManager.BATTERY_PLUGGED_WIRELESS -> "Wireless"
-        else -> "Unplugged"
-    }
-
-    val temperature = (intent?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0) ?: 0) / 10f
-    val voltage = intent?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0) ?: 0
-    val technology = intent?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY) ?: "Unknown"
-
-    return BatteryInfo(
-        level = batteryPct,
-        status = status,
-        health = health,
-        plugged = plugged,
-        temperature = temperature,
-        voltage = voltage,
-        technology = technology
-    )
 }

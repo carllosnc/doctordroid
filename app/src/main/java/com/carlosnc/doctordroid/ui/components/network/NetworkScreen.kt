@@ -55,6 +55,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import com.carlosnc.doctordroid.ui.components.PageTitle
 import java.net.InetAddress
 import java.net.NetworkInterface
 import java.util.Collections
@@ -90,7 +91,7 @@ fun NetworkScreen(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(text = "Network & Connectivity") },
+                title = { PageTitle("Network & Connectivity") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(

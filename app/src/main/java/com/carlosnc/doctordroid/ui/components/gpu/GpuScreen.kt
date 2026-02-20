@@ -48,6 +48,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.carlosnc.doctordroid.ui.components.PageTitle
 import kotlinx.coroutines.delay
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -108,7 +109,7 @@ fun GpuScreen(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(text = "GPU & Graphics") },
+                title = { PageTitle(text = "GPU & Graphics") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(

@@ -1,18 +1,14 @@
 package com.carlosnc.doctordroid.ui.components.temperature
 
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.os.BatteryManager
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,9 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -47,13 +41,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.carlosnc.doctordroid.ui.components.PageTitle
+import com.carlosnc.doctordroid.ui.components.battery.getBatteryTemperature
 import kotlinx.coroutines.delay
 import java.util.Locale
 
@@ -64,7 +59,7 @@ fun TemperatureScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    var batteryTemp by remember { mutableStateOf(getBatteryTemp(context)) }
+    var batteryTemp by remember { mutableStateOf(getBatteryTemperature(context)) }
     var ambientTemp by remember { mutableStateOf<Float?>(null) }
 
     val sensorManager = remember { context.getSystemService(Context.SENSOR_SERVICE) as SensorManager }
@@ -92,7 +87,7 @@ fun TemperatureScreen(
 
     LaunchedEffect(Unit) {
         while (true) {
-            batteryTemp = getBatteryTemp(context)
+            batteryTemp = getBatteryTemperature(context)
             delay(5000)
         }
     }
@@ -101,7 +96,7 @@ fun TemperatureScreen(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(text = "Temperature Info") },
+               title = { PageTitle("Temperature info") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -242,9 +237,4 @@ fun TemperatureDetailItem(label: String, value: String) {
             fontWeight = FontWeight.SemiBold
         )
     }
-}
-
-fun getBatteryTemp(context: Context): Float {
-    val intent = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
-    return (intent?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0) ?: 0) / 10f
 }
