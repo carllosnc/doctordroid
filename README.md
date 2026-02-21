@@ -2,6 +2,17 @@
 
 **Doctor Droid** is a comprehensive Android diagnostic and performance monitoring application built with Jetpack Compose. It provides real-time insights into your device's hardware and system status through a modern, clean interface.
 
+## Screenshots
+
+<div align="center">
+  <img src="screenshot/Screenshot_20260221_153057.png" width="250" />
+  <img src="screenshot/Screenshot_20260221_153222.png" width="250" />
+  <img src="screenshot/Screenshot_20260221_153236.png" width="250" />
+  <img src="screenshot/Screenshot_20260221_153303.png" width="250" />
+  <img src="screenshot/Screenshot_20260221_153318.png" width="250" />
+  <img src="screenshot/Screenshot_20260221_153748.png" width="250" />
+</div>
+
 ## Features
 
 - **Device Information**: Detailed hardware specs (Manufacturer, Model, Board, Android version, etc.).

@@ -57,7 +57,7 @@ fun CameraScreen(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-               title = { PageTitle("Network & Connectivity") },
+               title = { PageTitle("Camera Information") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
