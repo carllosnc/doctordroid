@@ -1,11 +1,21 @@
 package com.carlosnc.doctordroid.ui.components.health
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -73,15 +83,17 @@ fun TouchTestOverlay(onDismiss: () -> Unit, onComplete: () -> Unit) {
         Text(
             text = "Touch all areas to complete (${touchedCells.size}/$totalCells)",
             color = Color.White,
-            modifier = Modifier.align(Alignment.TopCenter).padding(top = 40.dp),
+            modifier = Modifier.align(Alignment.Center),
             fontWeight = FontWeight.Bold
         )
         
-        TextButton(
+        OutlinedButton(
             onClick = onDismiss,
-            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 40.dp)
+            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 40.dp),
+            border = BorderStroke(1.dp, Color.White),
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)
         ) {
-            Text("Cancel Test", color = Color.White)
+            Text("Cancel Test")
         }
     }
 }
