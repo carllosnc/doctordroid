@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Monitor
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.CircularProgressIndicator
@@ -59,6 +59,7 @@ fun HomeScreen(
     onAudioClick: () -> Unit,
     onQuickControlClick: () -> Unit,
     onHealthCheckClick: () -> Unit,
+    onDeviceResumeClick: () -> Unit,
     onToggleFloatingMonitor: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -72,6 +73,13 @@ fun HomeScreen(
                     PageTitle(text = stringResource(id = R.string.app_name))
                 },
                 actions = {
+                    IconButton(onClick = onDeviceResumeClick) {
+                        Icon(
+                            imageVector = Icons.Default.Description,
+                            contentDescription = "Device Resume",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                     IconButton(onClick = onQuickControlClick) {
                         Icon(
                             imageVector = Icons.Default.Tune,
