@@ -18,6 +18,7 @@ import com.carlosnc.doctordroid.ui.components.memory.MemoryScreen
 import com.carlosnc.doctordroid.ui.components.network.NetworkScreen
 import com.carlosnc.doctordroid.ui.components.storage.StorageScreen
 import com.carlosnc.doctordroid.ui.components.temperature.TemperatureScreen
+import com.carlosnc.doctordroid.ui.screens.DeviceResumeScreen
 import com.carlosnc.doctordroid.ui.screens.HomeScreen
 import com.carlosnc.doctordroid.ui.screens.QuickControlScreen
 import kotlinx.serialization.Serializable
@@ -60,6 +61,9 @@ object QuickControl
 
 @Serializable
 object HealthCheck
+
+@Serializable
+object DeviceResume
 
 @Composable
 fun AppNavHost(
@@ -112,6 +116,7 @@ fun AppNavHost(
                 onAudioClick = { navController.navigate(Audio) },
                 onQuickControlClick = { navController.navigate(QuickControl) },
                 onHealthCheckClick = { navController.navigate(HealthCheck) },
+                onDeviceResumeClick = { navController.navigate(DeviceResume) },
                 onToggleFloatingMonitor = onToggleFloatingMonitor
             )
         }
@@ -150,6 +155,9 @@ fun AppNavHost(
         }
         composable<HealthCheck> {
             HealthCheckScreen(onBackClick = { navController.popBackStack() })
+        }
+        composable<DeviceResume> {
+            DeviceResumeScreen(onBackClick = { navController.popBackStack() })
         }
     }
 }
