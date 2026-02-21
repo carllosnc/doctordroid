@@ -25,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,21 +37,23 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SensorCheckList() {
     val context = LocalContext.current
-    val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    val sensorManager = remember { context.getSystemService(Context.SENSOR_SERVICE) as SensorManager }
     
-    val sensors = listOf(
-        Sensor.TYPE_ACCELEROMETER to "Accelerometer",
-        Sensor.TYPE_GYROSCOPE to "Gyroscope",
-        Sensor.TYPE_LIGHT to "Light Sensor",
-        Sensor.TYPE_PROXIMITY to "Proximity Sensor",
-        Sensor.TYPE_MAGNETIC_FIELD to "Compass"
-    )
+    val sensorsWithStatus = remember(sensorManager) {
+        listOf(
+            Sensor.TYPE_ACCELEROMETER to "Accelerometer",
+            Sensor.TYPE_GYROSCOPE to "Gyroscope",
+            Sensor.TYPE_LIGHT to "Light Sensor",
+            Sensor.TYPE_PROXIMITY to "Proximity Sensor",
+            Sensor.TYPE_MAGNETIC_FIELD to "Compass"
+        ).map { (type, name) ->
+            val isPresent = sensorManager.getDefaultSensor(type) != null
+            Triple(type, name, isPresent)
+        }
+    }
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        sensors.forEach { (type, name) ->
-            val sensor = sensorManager.getDefaultSensor(type)
-            val isPresent = sensor != null
-            
+        sensorsWithStatus.forEach { (type, name, isPresent) ->
             SensorItem(
                 name = name,
                 isPresent = isPresent,
