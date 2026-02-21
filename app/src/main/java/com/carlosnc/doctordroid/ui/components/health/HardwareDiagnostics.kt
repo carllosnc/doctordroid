@@ -2,6 +2,7 @@ package com.carlosnc.doctordroid.ui.components.health
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.hardware.camera2.CameraManager
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.os.Build
@@ -20,7 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
-import androidx.compose.material.icons.filled.Camera
+import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material3.Button
@@ -55,10 +56,10 @@ fun HardwareTestList(onShowTouchTest: () -> Unit) {
             onTestClick = { playTestTone() }
         )
         TestItem(
-            title = "Camera Focus", 
-            description = "Test lens and focus mechanism", 
-            icon = Icons.Default.Camera,
-            onTestClick = { /* TODO: Launch camera test */ }
+            title = "Flashlight Test", 
+            description = "Toggle device flashlight", 
+            icon = Icons.Default.FlashOn,
+            onTestClick = { toggleFlashlight(context) }
         )
         TestItem(
             title = "Vibration Motor", 
@@ -73,6 +74,18 @@ private fun playTestTone() {
     try {
         val toneGen = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
         toneGen.startTone(ToneGenerator.TONE_PROP_BEEP, 200)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+private var isFlashOn = false
+private fun toggleFlashlight(context: Context) {
+    val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+    try {
+        val cameraId = cameraManager.cameraIdList[0]
+        isFlashOn = !isFlashOn
+        cameraManager.setTorchMode(cameraId, isFlashOn)
     } catch (e: Exception) {
         e.printStackTrace()
     }
