@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.wifi.ScanResult
+import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.telephony.TelephonyManager
@@ -150,6 +152,7 @@ fun WifiInfoContent(networkInfo: NetworkDetails) {
     Column {
         InfoItem(label = "SSID", value = networkInfo.wifiSsid, icon = Icons.Default.Wifi)
         InfoItem(label = "BSSID", value = networkInfo.wifiBssid, icon = Icons.Default.Router)
+        InfoItem(label = "Standard", value = networkInfo.wifiStandard, icon = Icons.Default.Wifi)
         InfoItem(label = "Frequency", value = networkInfo.wifiFreq, icon = Icons.Default.WifiTethering)
         InfoItem(label = "Link Speed", value = networkInfo.wifiLinkSpeed, icon = Icons.Default.NetworkCheck)
     }
@@ -218,6 +221,7 @@ data class NetworkDetails(
     val roaming: String,
     val wifiSsid: String,
     val wifiBssid: String,
+    val wifiStandard: String,
     val wifiFreq: String,
     val wifiLinkSpeed: String,
     val ipv4: String,
@@ -254,6 +258,7 @@ fun getNetworkDetails(context: Context): NetworkDetails {
 
     var ssid = "N/A"
     var bssid = "N/A"
+    var wifiStandard = "N/A"
     var freq = "N/A"
     var linkSpeed = "N/A"
 
@@ -265,6 +270,17 @@ fun getNetworkDetails(context: Context): NetworkDetails {
                 bssid = wifiInfo.bssid ?: "N/A"
                 freq = "${wifiInfo.frequency} MHz"
                 linkSpeed = "${wifiInfo.linkSpeed} Mbps"
+                
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    wifiStandard = when (wifiInfo.wifiStandard) {
+                        ScanResult.WIFI_STANDARD_LEGACY -> "Legacy"
+                        ScanResult.WIFI_STANDARD_11N -> "WiFi 4 (n)"
+                        ScanResult.WIFI_STANDARD_11AC -> "WiFi 5 (ac)"
+                        ScanResult.WIFI_STANDARD_11AX -> "WiFi 6 (ax)"
+                        ScanResult.WIFI_STANDARD_11AD -> "WiGig"
+                        else -> "Unknown"
+                    }
+                }
             }
         }
     } catch (e: SecurityException) {
@@ -292,26 +308,7 @@ fun getNetworkDetails(context: Context): NetworkDetails {
         }
     } catch (e: Exception) {}
 
-    val macAddress = try {
-        val all = Collections.list(NetworkInterface.getNetworkInterfaces())
-        var mac = "N/A"
-        for (nif in all) {
-            if (nif.name.equals("wlan0", ignoreCase = true)) {
-                val res = nif.hardwareAddress
-                if (res != null) {
-                    val sb = StringBuilder()
-                    for (b in res) {
-                        sb.append(String.format("%02X:", b))
-                    }
-                    if (sb.isNotEmpty()) {
-                        sb.deleteCharAt(sb.length - 1)
-                    }
-                    mac = sb.toString()
-                }
-            }
-        }
-        mac
-    } catch (e: Exception) { "N/A" }
+    val macAddress = "N/A" // Placeholder as getting MAC address is restricted in newer Android versions
 
     return NetworkDetails(
         status = status,
@@ -320,6 +317,7 @@ fun getNetworkDetails(context: Context): NetworkDetails {
         roaming = roaming,
         wifiSsid = ssid,
         wifiBssid = bssid,
+        wifiStandard = wifiStandard,
         wifiFreq = freq,
         wifiLinkSpeed = linkSpeed,
         ipv4 = ipv4,
