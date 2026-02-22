@@ -10,16 +10,12 @@ import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
 import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,13 +42,12 @@ import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
-import com.carlosnc.doctordroid.ui.components.battery.getBatteryTemperature
+import com.carlosnc.doctordroid.modules.battery.getBatteryTemperature
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import android.view.Choreographer
 import java.util.Locale
 

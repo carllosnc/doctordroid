@@ -16,14 +16,15 @@
 ## Features
 
 - **Device Information**: Detailed hardware specs (Manufacturer, Model, Board, Android version, etc.).
+- **Application Management**: List installed applications and their details.
 - **Storage Monitoring**: Visual breakdown of internal storage usage by category.
 - **Battery Health**: Real-time level, status, health, temperature, and voltage with dynamic charging animations.
-- **CPU & Performance**: Monitor processor load, core activity, and architecture.
+- **CPU & GPU**: Monitor processor load, core activity, architecture and GPU information.
 - **Network & Connectivity**: Track WiFi and Cellular status, IP addresses, and signal details.
 - **Audio & Sound**: Manage volume levels and check audio feature support.
 - **Health Check & Diagnostics**:
     - **Sensor Health**: Real-time status of Accelerometer, Gyroscope, Light Sensor, Proximity Sensor, and Compass.
-    - **Hardware Tests**: Interactive Touch Screen test (dead zone detection), Audio Output test, Camera Focus test, and Vibration Motor verification.
+    - **Hardware Tests**: Interactive Touch Screen test, Audio Output test, Flashlight test, and Vibration Motor verification.
 - **Quick Controls**: Access screen brightness and volume directly within the app.
 - **Floating Monitor**: Real-time overlay to track system performance while using other apps.
 

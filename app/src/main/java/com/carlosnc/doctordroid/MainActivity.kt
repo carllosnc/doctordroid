@@ -15,7 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.navigation.compose.rememberNavController
 import com.carlosnc.doctordroid.services.FloatingMonitorService
-import com.carlosnc.doctordroid.ui.navigation.AppNavHost
+import com.carlosnc.doctordroid.navigation.AppNavHost
 import com.carlosnc.doctordroid.ui.theme.DoctordroidTheme
 
 class MainActivity : ComponentActivity() {
