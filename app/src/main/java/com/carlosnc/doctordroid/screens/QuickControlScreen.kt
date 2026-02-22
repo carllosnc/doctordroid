@@ -169,7 +169,7 @@ fun ControlCard(
             colors = SliderDefaults.colors(
                 thumbColor = MaterialTheme.colorScheme.primary,
                 activeTrackColor = MaterialTheme.colorScheme.primary,
-                inactiveTrackColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
+                inactiveTrackColor = MaterialTheme.colorScheme.outlineVariant
             )
         )
     }

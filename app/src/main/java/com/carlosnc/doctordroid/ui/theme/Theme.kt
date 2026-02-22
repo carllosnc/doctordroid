@@ -30,7 +30,7 @@ private val DarkColorScheme = darkColorScheme(
     surfaceVariant = Blue900,
     onSurfaceVariant = Blue200,
     outline = Blue500,
-    outlineVariant = Blue800
+    outlineVariant = Blue700 // Increased contrast for dark mode dividers
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -53,7 +53,7 @@ private val LightColorScheme = lightColorScheme(
     surfaceVariant = Blue100,
     onSurfaceVariant = Blue950,
     outline = Blue400,
-    outlineVariant = Blue200
+    outlineVariant = Blue300 // Increased contrast for light mode dividers
 )
 
 @Composable

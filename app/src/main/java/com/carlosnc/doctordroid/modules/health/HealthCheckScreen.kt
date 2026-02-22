@@ -1,6 +1,5 @@
 package com.carlosnc.doctordroid.modules.health
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -9,7 +8,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -46,22 +44,28 @@ fun HealthCheckScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
                     .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                InfoSection(title = "Sensor Health")
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                InfoSection(
+                    title = "Sensor Health",
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
                 SensorCheckList()
 
                 HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 8.dp),
+                    modifier = Modifier.padding(vertical = 16.dp),
                     thickness = 1.dp,
                     color = MaterialTheme.colorScheme.outlineVariant
                 )
 
-                InfoSection(title = "Hardware Diagnostics")
+                InfoSection(
+                    title = "Hardware Diagnostics",
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
                 HardwareTestList(onShowTouchTest = { showTouchTest = true })
                 
-                Box(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(32.dp))
             }
         }
 
@@ -99,12 +103,12 @@ fun HealthCheckScreen(
 }
 
 @Composable
-fun InfoSection(title: String) {
+fun InfoSection(title: String, modifier: Modifier = Modifier) {
     Text(
         text = title.uppercase(),
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.primary,
         fontWeight = FontWeight.Bold,
-        modifier = Modifier.padding(bottom = 8.dp)
+        modifier = modifier.padding(bottom = 8.dp)
     )
 }

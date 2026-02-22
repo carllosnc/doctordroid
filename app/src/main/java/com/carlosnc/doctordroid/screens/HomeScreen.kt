@@ -1,6 +1,5 @@
 package com.carlosnc.doctordroid.screens
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -128,13 +127,13 @@ fun HomeScreen(
                 )
 
                 MemoryCard(
+                    onClick = onMemoryClick,
                     modifier = cardModifier
-                        .clickable { onMemoryClick() }
                 )
 
                 NetworkCard(
+                    onClick = onNetworkClick,
                     modifier = cardModifier
-                        .clickable { onNetworkClick() }
                 )
 
                 AudioCard(
@@ -143,13 +142,13 @@ fun HomeScreen(
                 )
 
                 BatteryCard(
+                    onClick = onBatteryClick,
                     modifier = cardModifier
-                        .clickable { onBatteryClick() }
                 )
 
                 CpuCard(
+                    onClick = onCpuClick,
                     modifier = cardModifier
-                        .clickable { onCpuClick() }
                 )
 
                 GpuCard(
@@ -163,8 +162,8 @@ fun HomeScreen(
                 )
 
                 TemperatureCard(
+                    onClick = onTemperatureClick,
                     modifier = cardModifier
-                        .clickable { onTemperatureClick() }
                 )
 
                 // Extra padding at the bottom for scrolling
