@@ -32,9 +32,9 @@ import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -54,7 +54,9 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.carlosnc.doctordroid.ui.components.DashboardListItem
 import com.carlosnc.doctordroid.ui.components.PageTitle
+import com.carlosnc.doctordroid.ui.components.ProgressListItem
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,19 +88,30 @@ fun StorageScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             StorageUsageCard(storageInfo)
             
-            Spacer(modifier = Modifier.height(24.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 16.dp),
+                thickness = 0.5.dp,
+                color = MaterialTheme.colorScheme.outlineVariant
+            )
             
+            InfoSection(title = "Storage Details")
             StorageDetailsList(storageInfo)
 
-            Spacer(modifier = Modifier.height(24.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 16.dp),
+                thickness = 0.5.dp,
+                color = MaterialTheme.colorScheme.outlineVariant
+            )
 
+            InfoSection(title = "Usage by Category")
             FileTypeUsageList(fileTypeUsage, storageInfo.totalBytes)
+            
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
@@ -235,42 +248,28 @@ fun UsageIndicator(label: String, value: String, color: Color) {
 
 @Composable
 fun StorageDetailsList(storageInfo: StorageInfo) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp)
-    ) {
-        DetailItem(label = "Mount Point", value = storageInfo.path)
-        DetailItem(label = "Total Capacity", value = formatSize(storageInfo.totalBytes))
-        DetailItem(label = "Available Space", value = formatSize(storageInfo.freeBytes))
-        DetailItem(label = "Used Space", value = formatSize(storageInfo.usedBytes))
+    Column(modifier = Modifier.fillMaxWidth()) {
+        DetailItem(label = "Mount Point", value = storageInfo.path, icon = Icons.Default.Folder)
+        DetailItem(label = "Total Capacity", value = formatSize(storageInfo.totalBytes), icon = Icons.Default.Description)
+        DetailItem(label = "Available Space", value = formatSize(storageInfo.freeBytes), icon = Icons.Default.Description)
+        DetailItem(label = "Used Space", value = formatSize(storageInfo.usedBytes), icon = Icons.Default.Description)
         DetailItem(
             label = "Free Percentage", 
-            value = String.format(Locale.getDefault(), "%.1f%%", (1f - storageInfo.usedPercentage) * 100)
+            value = String.format(Locale.getDefault(), "%.1f%%", (1f - storageInfo.usedPercentage) * 100),
+            icon = Icons.Default.Description
         )
     }
 }
 
 @Composable
-fun DetailItem(label: String, value: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 12.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = label, 
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = value, 
-            style = MaterialTheme.typography.bodyLarge, 
-            fontWeight = FontWeight.SemiBold
-        )
-    }
+fun DetailItem(label: String, value: String, icon: ImageVector) {
+    DashboardListItem(
+        title = label,
+        subtitle = value,
+        leftIcon = icon,
+        rightIcon = null,
+        onClick = {}
+    )
 }
 
 @Composable
@@ -280,16 +279,8 @@ fun FileTypeUsageList(fileTypes: List<FileTypeInfo>, totalBytes: Long) {
     }
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = "Usage by Category",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(bottom = 16.dp, start = 8.dp)
-        )
-        Column(modifier = Modifier.fillMaxWidth()) {
-            sortedFileTypes.forEach { fileType ->
-                FileTypeItem(fileType, totalBytes)
-            }
+        sortedFileTypes.forEach { fileType ->
+            FileTypeItem(fileType, totalBytes)
         }
     }
 }
@@ -312,62 +303,23 @@ fun FileTypeItem(fileType: FileTypeInfo, totalBytes: Long) {
         animationPlayed = true
     }
 
-    val primaryColor = MaterialTheme.colorScheme.primary
+    ProgressListItem(
+        title = fileType.name,
+        value = formatSize(fileType.sizeBytes),
+        progress = animatedProgress,
+        icon = fileType.icon
+    )
+}
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .size(44.dp)
-                .clip(CircleShape)
-                .background(primaryColor.copy(alpha = 0.1f)),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = fileType.icon,
-                contentDescription = null,
-                tint = primaryColor,
-                modifier = Modifier.size(22.dp)
-            )
-        }
-        
-        Spacer(modifier = Modifier.width(16.dp))
-        
-        Column(modifier = Modifier.weight(1f)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom
-            ) {
-                Text(
-                    text = fileType.name,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium
-                )
-                Text(
-                    text = formatSize(fileType.sizeBytes),
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = primaryColor
-                )
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            LinearProgressIndicator(
-                progress = { animatedProgress },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(6.dp)
-                    .clip(CircleShape),
-                color = primaryColor,
-                trackColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
-                strokeCap = StrokeCap.Round
-            )
-        }
-    }
+@Composable
+fun InfoSection(title: String) {
+    Text(
+        text = title.uppercase(),
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.primary,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
+    )
 }
 
 data class FileTypeInfo(
