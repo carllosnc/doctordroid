@@ -23,14 +23,14 @@ private val DarkColorScheme = darkColorScheme(
     onTertiary = Blue900,
     tertiaryContainer = Blue700,
     onTertiaryContainer = Blue50,
-    background = Blue950,
+    background = Blue900, // Lightened from Blue950
     onBackground = Blue50,
-    surface = Blue950,
+    surface = Blue900, // Lightened from Blue950
     onSurface = Blue50,
-    surfaceVariant = Blue900,
+    surfaceVariant = Blue800, // Lightened from Blue900 to maintain contrast
     onSurfaceVariant = Blue200,
     outline = Blue500,
-    outlineVariant = Blue700 // Increased contrast for dark mode dividers
+    outlineVariant = Blue700
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -53,14 +53,14 @@ private val LightColorScheme = lightColorScheme(
     surfaceVariant = Blue100,
     onSurfaceVariant = Blue950,
     outline = Blue400,
-    outlineVariant = Blue300 // Increased contrast for light mode dividers
+    outlineVariant = Blue300
 )
 
 @Composable
 fun DoctordroidTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false, // Set to false to see the custom dark theme colors
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
