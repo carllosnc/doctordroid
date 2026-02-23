@@ -23,9 +23,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Memory
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -41,9 +43,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.carlosnc.doctordroid.ui.components.DashboardListItem
 import com.carlosnc.doctordroid.ui.components.PageTitle
 import java.util.Locale
 
@@ -54,7 +58,6 @@ fun MemoryScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    // Fetch once, remove real-time updates
     val memoryInfo = remember { getMemoryInfo(context) }
 
     Scaffold(
@@ -77,15 +80,21 @@ fun MemoryScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             MemoryUsageCard(memoryInfo)
             
-            Spacer(modifier = Modifier.height(24.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 16.dp),
+                thickness = 0.5.dp,
+                color = MaterialTheme.colorScheme.outlineVariant
+            )
             
+            InfoSection(title = "RAM Details")
             MemoryDetailsList(memoryInfo)
+            
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
@@ -216,11 +225,7 @@ fun MemoryUsageIndicator(label: String, value: String, color: Color) {
 
 @Composable
 fun MemoryDetailsList(memoryInfo: MemoryInfo) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp)
-    ) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         MemoryDetailItem(label = "Total RAM", value = formatSize(memoryInfo.totalMem))
         MemoryDetailItem(label = "Used RAM", value = formatSize(memoryInfo.usedMem))
         MemoryDetailItem(label = "Available RAM", value = formatSize(memoryInfo.availMem))
@@ -234,24 +239,24 @@ fun MemoryDetailsList(memoryInfo: MemoryInfo) {
 
 @Composable
 fun MemoryDetailItem(label: String, value: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 12.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = label, 
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = value, 
-            style = MaterialTheme.typography.bodyLarge, 
-            fontWeight = FontWeight.SemiBold
-        )
-    }
+    DashboardListItem(
+        title = label,
+        subtitle = value,
+        leftIcon = Icons.Default.Memory,
+        rightIcon = null,
+        onClick = {}
+    )
+}
+
+@Composable
+fun InfoSection(title: String) {
+    Text(
+        text = title.uppercase(),
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.primary,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
+    )
 }
 
 data class MemoryInfo(

@@ -4,8 +4,6 @@ import android.content.Context
 import android.graphics.ImageFormat
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
-import android.util.Size
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,20 +13,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CameraAlt
-import androidx.compose.material.icons.filled.CameraRear
 import androidx.compose.material.icons.filled.CameraFront
+import androidx.compose.material.icons.filled.CameraRear
 import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -37,11 +33,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.carlosnc.doctordroid.ui.components.DashboardListItem
 import com.carlosnc.doctordroid.ui.components.PageTitle
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,7 +70,6 @@ fun CameraScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
-                .padding(bottom = 16.dp)
         ) {
             CameraHeader(cameraCount = cameraInfoList.size)
 
@@ -109,6 +104,8 @@ fun CameraScreen(
                 
                 Spacer(modifier = Modifier.height(8.dp))
             }
+            
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
@@ -118,7 +115,6 @@ fun CameraHeader(cameraCount: Int) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
             .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -147,37 +143,12 @@ fun CameraHeader(cameraCount: Int) {
 
 @Composable
 fun CameraDetailItem(label: String, value: String, icon: ImageVector) {
-    ListItem(
-        headlineContent = { 
-            Text(
-                text = label, 
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.SemiBold
-            ) 
-        },
-        supportingContent = { 
-            Text(
-                text = value,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            ) 
-        },
-        leadingContent = {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-        }
+    DashboardListItem(
+        title = label,
+        subtitle = value,
+        leftIcon = icon,
+        rightIcon = null,
+        onClick = {}
     )
 }
 
@@ -188,7 +159,7 @@ fun InfoSection(title: String) {
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.primary,
         fontWeight = FontWeight.Bold,
-        modifier = Modifier.padding(start = 16.dp, top = 24.dp, end = 16.dp, bottom = 8.dp)
+        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
     )
 }
 

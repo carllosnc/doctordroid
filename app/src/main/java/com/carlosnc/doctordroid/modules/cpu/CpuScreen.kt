@@ -14,6 +14,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Memory
+import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -30,8 +32,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.carlosnc.doctordroid.ui.components.DashboardListItem
 import com.carlosnc.doctordroid.ui.components.PageTitle
 import kotlinx.coroutines.delay
 
@@ -64,38 +68,35 @@ fun CpuScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            InfoSection(title = "Processor Information")
             CpuDetailsList(coreCount)
+            
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 16.dp),
+                thickness = 0.5.dp,
+                color = MaterialTheme.colorScheme.outlineVariant
+            )
+            
+            InfoSection(title = "Core Frequencies")
+            Column(modifier = Modifier.fillMaxWidth()) {
+                repeat(coreCount) { index ->
+                    CoreFrequencyItem(coreIndex = index)
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
 
 @Composable
 fun CpuDetailsList(coreCount: Int) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp)
-    ) {
-        CpuDetailItem(label = "Processor", value = Build.HARDWARE)
-        CpuDetailItem(label = "Cores", value = "$coreCount")
-        CpuDetailItem(label = "Architecture", value = System.getProperty("os.arch") ?: "Unknown")
-        CpuDetailItem(label = "ABI", value = Build.SUPPORTED_ABIS.joinToString(", "))
-        
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        Text(
-            text = "Core Frequencies",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 12.dp)
-        )
-        
-        repeat(coreCount) { index ->
-            CoreFrequencyItem(coreIndex = index)
-        }
+    Column(modifier = Modifier.fillMaxWidth()) {
+        CpuDetailItem(label = "Processor", value = Build.HARDWARE, icon = Icons.Default.Speed)
+        CpuDetailItem(label = "Cores", value = "$coreCount", icon = Icons.Default.Memory)
+        CpuDetailItem(label = "Architecture", value = System.getProperty("os.arch") ?: "Unknown", icon = Icons.Default.Speed)
+        CpuDetailItem(label = "ABI", value = Build.SUPPORTED_ABIS.joinToString(", "), icon = Icons.Default.Speed)
     }
 }
 
@@ -110,54 +111,33 @@ fun CoreFrequencyItem(coreIndex: Int) {
         }
     }
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = "Core $coreIndex",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.width(60.dp)
-        )
-        
-        HorizontalDivider(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 8.dp),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant
-        )
-        
-        Text(
-            text = if (frequency > 0) "${frequency}MHz" else "Offline",
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.width(70.dp),
-            textAlign = androidx.compose.ui.text.style.TextAlign.End
-        )
-    }
+    DashboardListItem(
+        title = "Core $coreIndex",
+        subtitle = if (frequency > 0) "${frequency}MHz" else "Offline",
+        leftIcon = Icons.Default.Speed,
+        rightIcon = null,
+        onClick = {}
+    )
 }
 
 @Composable
-fun CpuDetailItem(label: String, value: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 12.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.SemiBold
-        )
-    }
+fun CpuDetailItem(label: String, value: String, icon: ImageVector) {
+    DashboardListItem(
+        title = label,
+        subtitle = value,
+        leftIcon = icon,
+        rightIcon = null,
+        onClick = {}
+    )
+}
+
+@Composable
+fun InfoSection(title: String) {
+    Text(
+        text = title.uppercase(),
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.primary,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
+    )
 }

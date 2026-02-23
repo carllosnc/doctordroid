@@ -12,15 +12,12 @@ import android.os.SystemClock
 import android.telephony.TelephonyManager
 import android.util.DisplayMetrics
 import android.view.WindowManager
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -35,32 +32,30 @@ import androidx.compose.material.icons.filled.Nfc
 import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.SdCard
+import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.Sensors
+import androidx.compose.material.icons.filled.SettingsBackupRestore
+import androidx.compose.material.icons.filled.SimCard
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.carlosnc.doctordroid.ui.components.DashboardListItem
+import com.carlosnc.doctordroid.ui.components.PageTitle
 import java.util.Locale
 import java.util.concurrent.TimeUnit
-import androidx.compose.material.icons.filled.Security
-import androidx.compose.material.icons.filled.Sensors
-import androidx.compose.material.icons.filled.SettingsBackupRestore
-import androidx.compose.material.icons.filled.SimCard
-import androidx.compose.material.icons.filled.Timer
-import com.carlosnc.doctordroid.ui.components.PageTitle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -98,7 +93,7 @@ fun DeviceScreen(
             HardwareInfoContent(hardwareInfo)
             
             HorizontalDivider(
-                modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp),
+                modifier = Modifier.padding(vertical = 16.dp),
                 thickness = 1.dp,
                 color = MaterialTheme.colorScheme.outlineVariant
             )
@@ -107,7 +102,7 @@ fun DeviceScreen(
             SystemInfoContent(systemInfo)
             
             // Add some bottom padding for better scroll experience
-            Box(modifier = Modifier.height(24.dp))
+            Box(modifier = Modifier.height(32.dp))
         }
     }
 }
@@ -149,43 +144,18 @@ fun InfoSection(title: String) {
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.primary,
         fontWeight = FontWeight.Bold,
-        modifier = Modifier.padding(start = 16.dp, top = 24.dp, end = 16.dp, bottom = 8.dp)
+        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
     )
 }
 
 @Composable
 fun InfoItem(label: String, value: String, icon: ImageVector) {
-    ListItem(
-        headlineContent = { 
-            Text(
-                text = label, 
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.SemiBold
-            ) 
-        },
-        supportingContent = { 
-            Text(
-                text = value,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            ) 
-        },
-        leadingContent = {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-        }
+    DashboardListItem(
+        title = label,
+        subtitle = value,
+        leftIcon = icon,
+        rightIcon = null,
+        onClick = {}
     )
 }
 
