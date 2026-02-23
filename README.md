@@ -5,12 +5,12 @@
 ## Screenshots
 
 <div align="center">
-  <img src="screenshot/Screenshot_20260221_153057.png" width="250" />
-  <img src="screenshot/Screenshot_20260221_153222.png" width="250" />
-  <img src="screenshot/Screenshot_20260221_153236.png" width="250" />
-  <img src="screenshot/Screenshot_20260221_153303.png" width="250" />
-  <img src="screenshot/Screenshot_20260221_153318.png" width="250" />
-  <img src="screenshot/Screenshot_20260221_153748.png" width="250" />
+  <img src="screenshot/Screenshot_20260222_212417.png" width="250" />
+  <img src="screenshot/Screenshot_20260222_212515.png" width="250" />
+  <img src="screenshot/Screenshot_20260222_212530.png" width="250" />
+  <img src="screenshot/Screenshot_20260222_212543.png" width="250" />
+  <img src="screenshot/Screenshot_20260222_212556.png" width="250" />
+  <img src="screenshot/Screenshot_20260222_212612.png" width="250" />
 </div>
 
 ## Features
