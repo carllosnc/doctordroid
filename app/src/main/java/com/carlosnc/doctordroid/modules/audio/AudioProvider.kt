@@ -22,7 +22,7 @@ data class AudioInfo(
     val isVolumeFixed: Boolean
 )
 
-fun getAudioInfo(context: Context): com.carlosnc.doctordroid.modules.audio.AudioInfo {
+fun getAudioInfo(context: Context): AudioInfo {
     val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     
     val ringerMode = when (audioManager.ringerMode) {

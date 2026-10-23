@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -159,10 +160,10 @@ class FloatingMonitorService : Service(), LifecycleOwner, ViewModelStoreOwner, S
         }
 
         // Update FPS
-        LaunchedEffect(Unit) {
+        val choreographer = remember { Choreographer.getInstance() }
+        DisposableEffect(Unit) {
             var frameCount = 0
             var startTime = System.nanoTime()
-            val choreographer = Choreographer.getInstance()
             val callback = object : Choreographer.FrameCallback {
                 override fun doFrame(frameTimeNanos: Long) {
                     frameCount++
@@ -172,10 +173,17 @@ class FloatingMonitorService : Service(), LifecycleOwner, ViewModelStoreOwner, S
                         frameCount = 0
                         startTime = currentTime
                     }
-                    choreographer.postFrameCallback(this)
+                    try {
+                        choreographer.postFrameCallback(this)
+                    } catch (_: Exception) {
+                        // Choreographer may be disposed
+                    }
                 }
             }
             choreographer.postFrameCallback(callback)
+            onDispose {
+                choreographer.removeFrameCallback(callback)
+            }
         }
 
         Surface(

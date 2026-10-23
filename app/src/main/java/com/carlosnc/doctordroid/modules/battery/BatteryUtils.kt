@@ -36,6 +36,7 @@ fun getBatteryInfo(context: Context): BatteryInfo {
         BatteryManager.BATTERY_HEALTH_GOOD -> "Good"
         BatteryManager.BATTERY_HEALTH_OVERHEAT -> "Overheat"
         BatteryManager.BATTERY_HEALTH_DEAD -> "Dead"
+        BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> "Over Voltage"
         BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE -> "Failure"
         BatteryManager.BATTERY_HEALTH_COLD -> "Cold"
         else -> "Unknown"

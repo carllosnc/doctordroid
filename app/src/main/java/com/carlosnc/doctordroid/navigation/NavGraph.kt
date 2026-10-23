@@ -18,6 +18,7 @@ import com.carlosnc.doctordroid.modules.memory.MemoryScreen
 import com.carlosnc.doctordroid.modules.network.NetworkScreen
 import com.carlosnc.doctordroid.modules.storage.StorageScreen
 import com.carlosnc.doctordroid.modules.temperature.TemperatureScreen
+import com.carlosnc.doctordroid.modules.cleaner.FileAnalysisScreen
 import com.carlosnc.doctordroid.screens.DeviceResumeScreen
 import com.carlosnc.doctordroid.screens.HomeScreen
 import com.carlosnc.doctordroid.screens.QuickControlScreen
@@ -64,6 +65,9 @@ object HealthCheck
 
 @Serializable
 object DeviceResume
+
+@Serializable
+object FileAnalysis
 
 @Composable
 fun AppNavHost(
@@ -117,6 +121,7 @@ fun AppNavHost(
                 onQuickControlClick = { navController.navigate(QuickControl) },
                 onHealthCheckClick = { navController.navigate(HealthCheck) },
                 onDeviceResumeClick = { navController.navigate(DeviceResume) },
+                onFileAnalysisClick = { navController.navigate(FileAnalysis) },
                 onToggleFloatingMonitor = onToggleFloatingMonitor
             )
         }
@@ -158,6 +163,9 @@ fun AppNavHost(
         }
         composable<DeviceResume> {
             DeviceResumeScreen(onBackClick = { navController.popBackStack() })
+        }
+        composable<FileAnalysis> {
+            FileAnalysisScreen(onBackClick = { navController.popBackStack() })
         }
     }
 }

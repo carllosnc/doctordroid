@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import com.carlosnc.doctordroid.ui.components.DashboardListItem
 import com.carlosnc.doctordroid.ui.components.PageTitle
 import com.carlosnc.doctordroid.ui.components.ProgressListItem
+import com.carlosnc.doctordroid.utils.formatSize
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -329,6 +330,8 @@ data class FileTypeInfo(
 )
 
 fun getFileTypeUsage(): List<FileTypeInfo> {
+    // NOTE: These are hardcoded estimates. Real file-type breakdown requires
+    // scanning the filesystem via MediaStore or direct file traversal.
     return listOf(
         FileTypeInfo("Apps", 32L * 1024 * 1024 * 1024, Icons.Default.Apps),
         FileTypeInfo("Images", 15L * 1024 * 1024 * 1024, Icons.Default.Image),
@@ -356,16 +359,4 @@ fun getStorageInfo(): StorageInfo {
     val usedPercentage = if (totalBytes > 0) usedBytes.toFloat() / totalBytes.toFloat() else 0f
     
     return StorageInfo(path, totalBytes, freeBytes, usedBytes, usedPercentage)
-}
-
-fun formatSize(bytes: Long): String {
-    val kb = bytes / 1024.0
-    val mb = kb / 1024.0
-    val gb = mb / 1024.0
-    
-    return when {
-        gb >= 1 -> String.format(Locale.getDefault(), "%.2f GB", gb)
-        mb >= 1 -> String.format(Locale.getDefault(), "%.2f MB", mb)
-        else -> String.format(Locale.getDefault(), "%.2f KB", kb)
-    }
 }

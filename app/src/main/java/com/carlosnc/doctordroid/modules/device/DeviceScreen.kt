@@ -54,6 +54,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.carlosnc.doctordroid.ui.components.DashboardListItem
 import com.carlosnc.doctordroid.ui.components.PageTitle
+import com.carlosnc.doctordroid.utils.formatSize
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
@@ -231,12 +232,26 @@ fun getHardwareInfo(context: Context): HardwareInfo {
 
 fun getSystemInfo(): SystemInfo {
     val uptimeMillis = SystemClock.elapsedRealtime()
-    val uptime = String.format(
-        Locale.getDefault(),
-        "%d hours, %d minutes",
-        TimeUnit.MILLISECONDS.toHours(uptimeMillis),
-        TimeUnit.MILLISECONDS.toMinutes(uptimeMillis) % 60
-    )
+    val hours = TimeUnit.MILLISECONDS.toHours(uptimeMillis)
+    val minutes = TimeUnit.MILLISECONDS.toMinutes(uptimeMillis) % 60
+    val seconds = TimeUnit.MILLISECONDS.toSeconds(uptimeMillis) % 60
+    val uptime = when {
+        hours > 0 -> String.format(
+            Locale.getDefault(),
+            "%d hours, %d minutes",
+            hours, minutes
+        )
+        minutes > 0 -> String.format(
+            Locale.getDefault(),
+            "%d minutes, %d seconds",
+            minutes, seconds
+        )
+        else -> String.format(
+            Locale.getDefault(),
+            "%d seconds",
+            seconds
+        )
+    }
     
     val kernelVersion = System.getProperty("os.version") ?: "Unknown"
 
@@ -244,9 +259,4 @@ fun getSystemInfo(): SystemInfo {
         kernelVersion = kernelVersion,
         uptime = uptime
     )
-}
-
-fun formatSize(bytes: Long): String {
-    val gb = bytes / (1024.0 * 1024.0 * 1024.0)
-    return String.format(Locale.getDefault(), "%.2f GB", gb)
 }

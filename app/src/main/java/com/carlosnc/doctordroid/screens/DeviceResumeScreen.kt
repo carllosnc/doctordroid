@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.carlosnc.doctordroid.ui.components.PageTitle
 import com.carlosnc.doctordroid.modules.device.rememberDeviceInfo
 import com.carlosnc.doctordroid.modules.storage.getStorageInfo
-import com.carlosnc.doctordroid.modules.storage.formatSize
+import com.carlosnc.doctordroid.utils.formatSize
 import com.carlosnc.doctordroid.modules.memory.getMemoryInfo
 import com.carlosnc.doctordroid.modules.battery.getBatteryInfo
 import com.carlosnc.doctordroid.modules.network.getNetworkDetails

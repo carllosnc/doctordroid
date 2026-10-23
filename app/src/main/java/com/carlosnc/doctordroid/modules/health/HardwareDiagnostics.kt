@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -31,6 +32,14 @@ import com.carlosnc.doctordroid.ui.components.DashboardListItem
 @Composable
 fun HardwareTestList(onShowTouchTest: () -> Unit) {
     val context = LocalContext.current
+
+    DisposableEffect(Unit) {
+        onDispose {
+            isFlashOn = false
+            toneGen?.release()
+            toneGen = null
+        }
+    }
     
     Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
         DashboardListItem(
@@ -77,14 +86,16 @@ private fun TestButton(onClick: () -> Unit) {
 
 private fun playTestTone() {
     try {
-        val toneGen = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
-        toneGen.startTone(ToneGenerator.TONE_PROP_BEEP, 200)
+        toneGen?.release()
+        toneGen = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+        toneGen?.startTone(ToneGenerator.TONE_PROP_BEEP, 200)
     } catch (e: Exception) {
         e.printStackTrace()
     }
 }
 
 private var isFlashOn = false
+private var toneGen: ToneGenerator? = null
 private fun toggleFlashlight(context: Context) {
     val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     try {

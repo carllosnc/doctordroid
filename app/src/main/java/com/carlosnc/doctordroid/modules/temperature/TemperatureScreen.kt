@@ -78,7 +78,7 @@ fun TemperatureScreen(
 
     DisposableEffect(Unit) {
         if (tempSensor != null) {
-            sensorManager.registerListener(sensorEventListener, tempSensor, SensorManager.SENSOR_DELAY_NORMAL)
+            sensorManager.registerListener(sensorEventListener, tempSensor, SensorManager.SENSOR_DELAY_UI)
         }
         onDispose {
             sensorManager.unregisterListener(sensorEventListener)

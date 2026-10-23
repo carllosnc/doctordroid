@@ -2,7 +2,6 @@ package com.carlosnc.doctordroid.modules.cpu
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.RandomAccessFile
 import java.io.File
 
 fun getCoreFrequency(coreIndex: Int): Long {
