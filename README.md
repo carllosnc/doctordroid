@@ -28,15 +28,15 @@ Architected with MVVM, Kotlin Coroutines, and `StateFlow`, Doctor Droid delivers
 ## 📱 Screenshots
 
 <div align="center">
-  <img src="screenshot/Screenshot_20260222_212417.png" width="270" />
-  <img src="screenshot/Screenshot_20260222_212515.png" width="270" />
-  <img src="screenshot/Screenshot_20260222_212530.png" width="270" />
+  <img src="screenshot/Screenshot_1793645772.png" width="270" />
+  <img src="screenshot/Screenshot_1793645813.png" width="270" />
+  <img src="screenshot/Screenshot_1793645837.png" width="270" />
 </div>
 
 <div align="center" style="margin-top: 12px;">
-  <img src="screenshot/Screenshot_20260222_212543.png" width="270" />
-  <img src="screenshot/Screenshot_20260222_212556.png" width="270" />
-  <img src="screenshot/Screenshot_20260222_212612.png" width="270" />
+  <img src="screenshot/Screenshot_1793645851.png" width="270" />
+  <img src="screenshot/Screenshot_1793645864.png" width="270" />
+  <img src="screenshot/Screenshot_1793646246.png" width="270" />
 </div>
 
 ---
