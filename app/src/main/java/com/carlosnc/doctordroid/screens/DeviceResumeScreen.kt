@@ -6,8 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.hardware.display.DisplayManager
 import android.os.Build
 import android.telephony.TelephonyManager
+import android.view.Display
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
@@ -497,11 +499,16 @@ fun calculateHealthScore(
 
 fun getDisplayInfo(context: Context): Pair<String, String> {
     val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
-    val display = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-        context.display
-    } else {
-        @Suppress("DEPRECATION")
-        windowManager?.defaultDisplay
+    val displayManager = context.getSystemService(Context.DISPLAY_SERVICE) as? DisplayManager
+    val display: Display? = try {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            context.display
+        } else {
+            @Suppress("DEPRECATION")
+            windowManager?.defaultDisplay
+        }
+    } catch (_: Throwable) {
+        displayManager?.getDisplay(Display.DEFAULT_DISPLAY)
     }
     val refreshRate = display?.refreshRate?.toInt() ?: 60
     val metrics = context.resources.displayMetrics

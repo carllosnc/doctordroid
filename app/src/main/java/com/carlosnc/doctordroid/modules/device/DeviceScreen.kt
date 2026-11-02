@@ -4,6 +4,7 @@ import android.app.ActivityManager
 import android.content.Context
 import android.hardware.SensorManager
 import android.hardware.camera2.CameraManager
+import android.hardware.display.DisplayManager
 import android.nfc.NfcAdapter
 import android.os.Build
 import android.os.Environment
@@ -11,6 +12,7 @@ import android.os.StatFs
 import android.os.SystemClock
 import android.telephony.TelephonyManager
 import android.util.DisplayMetrics
+import android.view.Display
 import android.view.WindowManager
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -190,24 +192,41 @@ fun getHardwareInfo(context: Context): HardwareInfo {
     val totalStorage = formatSize(stat.totalBytes)
 
     // Display
-    val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
+    val displayManager = context.getSystemService(Context.DISPLAY_SERVICE) as? DisplayManager
+    val display: Display? = try {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            context.display
+        } else {
+            @Suppress("DEPRECATION")
+            windowManager?.defaultDisplay
+        }
+    } catch (_: Throwable) {
+        displayManager?.getDisplay(Display.DEFAULT_DISPLAY)
+    }
+
     val displayInfo: String
     val refreshRate: String
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-        val windowMetrics = windowManager.currentWindowMetrics
-        val bounds = windowMetrics.bounds
+        val bounds = try {
+            windowManager?.currentWindowMetrics?.bounds
+        } catch (_: Throwable) {
+            null
+        }
         val densityDpi = context.resources.configuration.densityDpi
-        displayInfo = "${bounds.width()} x ${bounds.height()} ($densityDpi dpi)"
-        val display = context.display
+        displayInfo = if (bounds != null) {
+            "${bounds.width()} x ${bounds.height()} ($densityDpi dpi)"
+        } else {
+            val dm = context.resources.displayMetrics
+            "${dm.widthPixels} x ${dm.heightPixels} ($densityDpi dpi)"
+        }
         refreshRate = "${display?.refreshRate?.toInt() ?: 60} Hz"
     } else {
         val metrics = DisplayMetrics()
         @Suppress("DEPRECATION")
-        val display = windowManager.defaultDisplay
-        @Suppress("DEPRECATION")
-        display.getMetrics(metrics)
+        display?.getMetrics(metrics)
         displayInfo = "${metrics.widthPixels} x ${metrics.heightPixels} (${metrics.densityDpi} dpi)"
-        refreshRate = "${display.refreshRate.toInt()} Hz"
+        refreshRate = "${display?.refreshRate?.toInt() ?: 60} Hz"
     }
 
     // Camera
