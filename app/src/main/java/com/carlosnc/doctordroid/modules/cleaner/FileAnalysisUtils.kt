@@ -1,4 +1,4 @@
-package com.carlosnc.doctordroid.modules.cleaner
+﻿package com.carlosnc.doctordroid.modules.cleaner
 
 import android.content.ContentResolver
 import android.content.Context
@@ -8,13 +8,13 @@ import android.os.Environment
 import android.os.StatFs
 import android.provider.MediaStore
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Android
-import androidx.compose.material.icons.filled.Archive
-import androidx.compose.material.icons.filled.AudioFile
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.Movie
-import androidx.compose.material.icons.filled.MusicNote
+import androidx.compose.material.icons.outlined.Android
+import androidx.compose.material.icons.outlined.Archive
+import androidx.compose.material.icons.outlined.AudioFile
+import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.outlined.Movie
+import androidx.compose.material.icons.outlined.MusicNote
 import androidx.compose.ui.graphics.vector.ImageVector
 import java.io.File
 
@@ -42,13 +42,13 @@ fun scanFileCategories(context: Context): List<FileCategory> {
     val other = (totalStorage - totalKnown).coerceAtLeast(0L)
 
     return listOf(
-        FileCategory("Images", images.sizeBytes, images.fileCount, Icons.Default.Image),
-        FileCategory("Videos", videos.sizeBytes, videos.fileCount, Icons.Default.Movie),
-        FileCategory("Audio", audio.sizeBytes, audio.fileCount, Icons.Default.MusicNote),
-        FileCategory("Documents", documents.sizeBytes, documents.fileCount, Icons.Default.Description),
-        FileCategory("Archives", archives.sizeBytes, archives.fileCount, Icons.Default.Archive),
-        FileCategory("APK Files", apks.sizeBytes, apks.fileCount, Icons.Default.Android),
-        FileCategory("Other", other, 0, Icons.Default.AudioFile)
+        FileCategory("Images", images.sizeBytes, images.fileCount, Icons.Outlined.Image),
+        FileCategory("Videos", videos.sizeBytes, videos.fileCount, Icons.Outlined.Movie),
+        FileCategory("Audio", audio.sizeBytes, audio.fileCount, Icons.Outlined.MusicNote),
+        FileCategory("Documents", documents.sizeBytes, documents.fileCount, Icons.Outlined.Description),
+        FileCategory("Archives", archives.sizeBytes, archives.fileCount, Icons.Outlined.Archive),
+        FileCategory("APK Files", apks.sizeBytes, apks.fileCount, Icons.Outlined.Android),
+        FileCategory("Other", other, 0, Icons.Outlined.AudioFile)
     )
 }
 

@@ -1,7 +1,7 @@
-package com.carlosnc.doctordroid.modules.camera
+﻿package com.carlosnc.doctordroid.modules.camera
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.carlosnc.doctordroid.ui.components.DashboardListItem
@@ -14,7 +14,7 @@ fun CameraCard(
     DashboardListItem(
         title = "Camera Info",
         subtitle = "Resolution & features",
-        leftIcon = Icons.Default.CameraAlt,
+        leftIcon = Icons.Outlined.CameraAlt,
         onClick = onClick,
         modifier = modifier
     )

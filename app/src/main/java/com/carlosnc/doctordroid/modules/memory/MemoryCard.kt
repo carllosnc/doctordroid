@@ -1,7 +1,7 @@
-package com.carlosnc.doctordroid.modules.memory
+﻿package com.carlosnc.doctordroid.modules.memory
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Memory
+import androidx.compose.material.icons.outlined.Memory
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.carlosnc.doctordroid.ui.components.DashboardListItem
@@ -14,7 +14,7 @@ fun MemoryCard(
     DashboardListItem(
         title = "Memory Details",
         subtitle = "RAM & Swap usage",
-        leftIcon = Icons.Default.Memory,
+        leftIcon = Icons.Outlined.Memory,
         onClick = onClick,
         modifier = modifier
     )

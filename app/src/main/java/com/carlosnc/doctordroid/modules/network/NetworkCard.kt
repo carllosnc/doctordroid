@@ -1,11 +1,12 @@
-package com.carlosnc.doctordroid.modules.network
+﻿package com.carlosnc.doctordroid.modules.network
 
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Wifi
+import androidx.compose.material.icons.outlined.Wifi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.carlosnc.doctordroid.ui.components.DashboardListItem
@@ -16,19 +17,19 @@ fun NetworkCard(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val networkStatus = getNetworkStatus(context)
+    val networkStatus = remember { getNetworkStatus(context) }
     
     DashboardListItem(
         title = "Network & Connectivity",
         subtitle = networkStatus,
-        leftIcon = Icons.Default.Wifi,
+        leftIcon = Icons.Outlined.Wifi,
         onClick = onClick,
         modifier = modifier
     )
 }
 
 private fun getNetworkStatus(context: Context): String {
-    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager ?: return "Disconnected"
     val network = connectivityManager.activeNetwork ?: return "Disconnected"
     val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return "Disconnected"
     

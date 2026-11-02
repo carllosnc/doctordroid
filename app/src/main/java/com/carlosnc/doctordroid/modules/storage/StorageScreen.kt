@@ -22,13 +22,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Apps
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.Movie
-import androidx.compose.material.icons.filled.MusicNote
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Apps
+import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.Folder
+import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.outlined.Movie
+import androidx.compose.material.icons.outlined.MusicNote
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,6 +44,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,10 +66,12 @@ import java.util.Locale
 @Composable
 fun StorageScreen(
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: StorageViewModel = viewModel()
 ) {
-    val storageInfo = remember { getStorageInfo() }
-    val fileTypeUsage = remember { getFileTypeUsage() }
+    val uiState by viewModel.uiState.collectAsState()
+    val storageInfo = uiState.storageInfo
+    val fileTypeUsage = uiState.fileTypeUsage
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -77,7 +81,7 @@ fun StorageScreen(
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = "Back"
                         )
                     }
@@ -96,7 +100,7 @@ fun StorageScreen(
             
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 16.dp),
-                thickness = 0.5.dp,
+                thickness = 1.dp,
                 color = MaterialTheme.colorScheme.outlineVariant
             )
             
@@ -105,7 +109,7 @@ fun StorageScreen(
 
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 16.dp),
-                thickness = 0.5.dp,
+                thickness = 1.dp,
                 color = MaterialTheme.colorScheme.outlineVariant
             )
 
@@ -250,14 +254,14 @@ fun UsageIndicator(label: String, value: String, color: Color) {
 @Composable
 fun StorageDetailsList(storageInfo: StorageInfo) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        DetailItem(label = "Mount Point", value = storageInfo.path, icon = Icons.Default.Folder)
-        DetailItem(label = "Total Capacity", value = formatSize(storageInfo.totalBytes), icon = Icons.Default.Description)
-        DetailItem(label = "Available Space", value = formatSize(storageInfo.freeBytes), icon = Icons.Default.Description)
-        DetailItem(label = "Used Space", value = formatSize(storageInfo.usedBytes), icon = Icons.Default.Description)
+        DetailItem(label = "Mount Point", value = storageInfo.path, icon = Icons.Outlined.Folder)
+        DetailItem(label = "Total Capacity", value = formatSize(storageInfo.totalBytes), icon = Icons.Outlined.Description)
+        DetailItem(label = "Available Space", value = formatSize(storageInfo.freeBytes), icon = Icons.Outlined.Description)
+        DetailItem(label = "Used Space", value = formatSize(storageInfo.usedBytes), icon = Icons.Outlined.Description)
         DetailItem(
             label = "Free Percentage", 
             value = String.format(Locale.getDefault(), "%.1f%%", (1f - storageInfo.usedPercentage) * 100),
-            icon = Icons.Default.Description
+            icon = Icons.Outlined.Description
         )
     }
 }
@@ -333,12 +337,12 @@ fun getFileTypeUsage(): List<FileTypeInfo> {
     // NOTE: These are hardcoded estimates. Real file-type breakdown requires
     // scanning the filesystem via MediaStore or direct file traversal.
     return listOf(
-        FileTypeInfo("Apps", 32L * 1024 * 1024 * 1024, Icons.Default.Apps),
-        FileTypeInfo("Images", 15L * 1024 * 1024 * 1024, Icons.Default.Image),
-        FileTypeInfo("Videos", 25L * 1024 * 1024 * 1024, Icons.Default.Movie),
-        FileTypeInfo("Audio", 5L * 1024 * 1024 * 1024, Icons.Default.MusicNote),
-        FileTypeInfo("Documents", 2L * 1024 * 1024 * 1024, Icons.Default.Description),
-        FileTypeInfo("Other", 8L * 1024 * 1024 * 1024, Icons.Default.Folder)
+        FileTypeInfo("Apps", 32L * 1024 * 1024 * 1024, Icons.Outlined.Apps),
+        FileTypeInfo("Images", 15L * 1024 * 1024 * 1024, Icons.Outlined.Image),
+        FileTypeInfo("Videos", 25L * 1024 * 1024 * 1024, Icons.Outlined.Movie),
+        FileTypeInfo("Audio", 5L * 1024 * 1024 * 1024, Icons.Outlined.MusicNote),
+        FileTypeInfo("Documents", 2L * 1024 * 1024 * 1024, Icons.Outlined.Description),
+        FileTypeInfo("Other", 8L * 1024 * 1024 * 1024, Icons.Outlined.Folder)
     )
 }
 

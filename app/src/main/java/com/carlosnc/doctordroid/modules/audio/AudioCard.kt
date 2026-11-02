@@ -1,7 +1,7 @@
-package com.carlosnc.doctordroid.modules.audio
+﻿package com.carlosnc.doctordroid.modules.audio
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.carlosnc.doctordroid.ui.components.DashboardListItem
@@ -14,7 +14,7 @@ fun AudioCard(
     DashboardListItem(
         title = "Audio & Sound",
         subtitle = "Volume, sources & info",
-        leftIcon = Icons.AutoMirrored.Filled.VolumeUp,
+        leftIcon = Icons.AutoMirrored.Outlined.VolumeUp,
         onClick = onClick,
         modifier = modifier
     )

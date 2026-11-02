@@ -20,23 +20,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Android
-import androidx.compose.material.icons.filled.CameraAlt
-import androidx.compose.material.icons.filled.DeveloperMode
-import androidx.compose.material.icons.filled.DisplaySettings
-import androidx.compose.material.icons.filled.Fingerprint
-import androidx.compose.material.icons.filled.Hardware
-import androidx.compose.material.icons.filled.Memory
-import androidx.compose.material.icons.filled.Nfc
-import androidx.compose.material.icons.filled.PhoneAndroid
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.SdCard
-import androidx.compose.material.icons.filled.Security
-import androidx.compose.material.icons.filled.Sensors
-import androidx.compose.material.icons.filled.SettingsBackupRestore
-import androidx.compose.material.icons.filled.SimCard
-import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Android
+import androidx.compose.material.icons.outlined.CameraAlt
+import androidx.compose.material.icons.outlined.DeveloperMode
+import androidx.compose.material.icons.outlined.DisplaySettings
+import androidx.compose.material.icons.outlined.Fingerprint
+import androidx.compose.material.icons.outlined.Hardware
+import androidx.compose.material.icons.outlined.Memory
+import androidx.compose.material.icons.outlined.Nfc
+import androidx.compose.material.icons.outlined.PhoneAndroid
+import androidx.compose.material.icons.outlined.Refresh
+import androidx.compose.material.icons.outlined.SdStorage
+import androidx.compose.material.icons.outlined.Sensors
+import androidx.compose.material.icons.outlined.SimCard
+import androidx.compose.material.icons.outlined.Speed
+import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -46,7 +45,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -62,21 +63,23 @@ import java.util.concurrent.TimeUnit
 @Composable
 fun DeviceScreen(
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: DeviceViewModel = viewModel()
 ) {
-    val context = LocalContext.current
-    val hardwareInfo = remember { getHardwareInfo(context) }
-    val systemInfo = getSystemInfo()
+    val uiState by viewModel.uiState.collectAsState()
+    val deviceInfo = uiState.deviceInfo
+    val hardwareInfo = uiState.hardwareInfo
+    val systemInfo = uiState.systemInfo
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-               title = { PageTitle("Device info") },
+                title = { PageTitle(text = "Device & System") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = "Back"
                         )
                     }
@@ -90,63 +93,51 @@ fun DeviceScreen(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            InfoSection(title = "Hardware")
-            HardwareInfoContent(hardwareInfo)
-            
+            InfoSection(title = "Device Identification")
+            Column {
+                InfoItem(label = "Model", value = deviceInfo?.model ?: "Unknown", icon = Icons.Outlined.PhoneAndroid)
+                InfoItem(label = "Manufacturer", value = deviceInfo?.brand ?: "Unknown", icon = Icons.Outlined.Hardware)
+                InfoItem(label = "Device Codename", value = deviceInfo?.deviceName ?: "Unknown", icon = Icons.Outlined.DeveloperMode)
+                InfoItem(label = "Hardware / Board", value = Build.BOARD, icon = Icons.Outlined.Memory)
+            }
+
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 16.dp),
                 thickness = 1.dp,
                 color = MaterialTheme.colorScheme.outlineVariant
             )
-            
-            InfoSection(title = "System")
-            SystemInfoContent(systemInfo)
-            
-            // Add some bottom padding for better scroll experience
+
+            InfoSection(title = "Android System")
+            Column {
+                InfoItem(label = "Android Version", value = Build.VERSION.RELEASE, icon = Icons.Outlined.Android)
+                InfoItem(label = "API Level", value = "${Build.VERSION.SDK_INT}", icon = Icons.Outlined.DeveloperMode)
+                InfoItem(label = "Security Patch", value = Build.VERSION.SECURITY_PATCH, icon = Icons.Outlined.Fingerprint)
+                InfoItem(label = "Build Number", value = Build.DISPLAY, icon = Icons.Outlined.DeveloperMode)
+                InfoItem(label = "Kernel Version", value = systemInfo.kernelVersion, icon = Icons.Outlined.Speed)
+                InfoItem(label = "System Uptime", value = systemInfo.uptime, icon = Icons.Outlined.Timer)
+            }
+
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 16.dp),
+                thickness = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant
+            )
+
+            InfoSection(title = "Hardware Specifications")
+            Column {
+                InfoItem(label = "Total RAM", value = hardwareInfo.ramSize, icon = Icons.Outlined.Memory)
+                InfoItem(label = "Internal Storage", value = hardwareInfo.storage, icon = Icons.Outlined.SdStorage)
+                InfoItem(label = "Screen Resolution", value = hardwareInfo.display, icon = Icons.Outlined.DisplaySettings)
+                InfoItem(label = "Display Refresh Rate", value = hardwareInfo.refreshRate, icon = Icons.Outlined.Refresh)
+                InfoItem(label = "Camera Hardware", value = hardwareInfo.camera, icon = Icons.Outlined.CameraAlt)
+                InfoItem(label = "SIM Configuration", value = hardwareInfo.simSlots, icon = Icons.Outlined.SimCard)
+                InfoItem(label = "NFC Support", value = hardwareInfo.nfc, icon = Icons.Outlined.Nfc)
+                InfoItem(label = "Sensors Count", value = "${hardwareInfo.sensorCount} sensors", icon = Icons.Outlined.Sensors)
+            }
+
             Box(modifier = Modifier.height(32.dp))
         }
     }
-}
-
-@Composable
-fun HardwareInfoContent(hardwareInfo: HardwareInfo) {
-    Column {
-        InfoItem(label = "RAM Size", value = hardwareInfo.ramSize, icon = Icons.Default.Memory)
-        InfoItem(label = "Internal Storage", value = hardwareInfo.storage, icon = Icons.Default.SdCard)
-        InfoItem(label = "Display", value = hardwareInfo.display, icon = Icons.Default.DisplaySettings)
-        InfoItem(label = "Refresh Rate", value = hardwareInfo.refreshRate, icon = Icons.Default.Refresh)
-        InfoItem(label = "Cameras", value = hardwareInfo.camera, icon = Icons.Default.CameraAlt)
-        InfoItem(label = "NFC Support", value = hardwareInfo.nfc, icon = Icons.Default.Nfc)
-        InfoItem(label = "SIM Slots", value = hardwareInfo.simSlots, icon = Icons.Default.SimCard)
-        InfoItem(label = "Sensors Count", value = hardwareInfo.sensorCount, icon = Icons.Default.Sensors)
-    }
-}
-
-@Composable
-fun SystemInfoContent(systemInfo: SystemInfo) {
-    Column {
-        InfoItem(label = "Manufacturer", value = Build.MANUFACTURER, icon = Icons.Default.Hardware)
-        InfoItem(label = "Model", value = Build.MODEL, icon = Icons.Default.PhoneAndroid)
-        InfoItem(label = "Board", value = Build.BOARD, icon = Icons.Default.DeveloperMode)
-        InfoItem(label = "Hardware", value = Build.HARDWARE, icon = Icons.Default.Hardware)
-        InfoItem(label = "Android Version", value = Build.VERSION.RELEASE, icon = Icons.Default.Android)
-        InfoItem(label = "Security Patch", value = Build.VERSION.SECURITY_PATCH, icon = Icons.Default.Security)
-        InfoItem(label = "SDK Level", value = Build.VERSION.SDK_INT.toString(), icon = Icons.Default.Fingerprint)
-        InfoItem(label = "Bootloader", value = Build.BOOTLOADER, icon = Icons.Default.SettingsBackupRestore)
-        InfoItem(label = "Kernel Version", value = systemInfo.kernelVersion, icon = Icons.Default.SettingsBackupRestore)
-        InfoItem(label = "Uptime", value = systemInfo.uptime, icon = Icons.Default.Timer)
-    }
-}
-
-@Composable
-fun InfoSection(title: String) {
-    Text(
-        text = title.uppercase(),
-        style = MaterialTheme.typography.labelMedium,
-        color = MaterialTheme.colorScheme.primary,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
-    )
 }
 
 @Composable
@@ -157,6 +148,17 @@ fun InfoItem(label: String, value: String, icon: ImageVector) {
         leftIcon = icon,
         rightIcon = null,
         onClick = {}
+    )
+}
+
+@Composable
+fun InfoSection(title: String) {
+    Text(
+        text = title.uppercase(),
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.primary,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
     )
 }
 
@@ -189,16 +191,28 @@ fun getHardwareInfo(context: Context): HardwareInfo {
 
     // Display
     val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-    val metrics = DisplayMetrics()
-    @Suppress("DEPRECATION")
-    val display = windowManager.defaultDisplay
-    display.getMetrics(metrics)
-    val displayInfo = "${metrics.widthPixels} x ${metrics.heightPixels} (${metrics.densityDpi} dpi)"
-    val refreshRate = "${display.refreshRate.toInt()} Hz"
+    val displayInfo: String
+    val refreshRate: String
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        val windowMetrics = windowManager.currentWindowMetrics
+        val bounds = windowMetrics.bounds
+        val densityDpi = context.resources.configuration.densityDpi
+        displayInfo = "${bounds.width()} x ${bounds.height()} ($densityDpi dpi)"
+        val display = context.display
+        refreshRate = "${display?.refreshRate?.toInt() ?: 60} Hz"
+    } else {
+        val metrics = DisplayMetrics()
+        @Suppress("DEPRECATION")
+        val display = windowManager.defaultDisplay
+        @Suppress("DEPRECATION")
+        display.getMetrics(metrics)
+        displayInfo = "${metrics.widthPixels} x ${metrics.heightPixels} (${metrics.densityDpi} dpi)"
+        refreshRate = "${display.refreshRate.toInt()} Hz"
+    }
 
     // Camera
     val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
-    val cameraIds = try { cameraManager.cameraIdList.size } catch (e: Exception) { 0 }
+    val cameraIds = try { cameraManager.cameraIdList.size } catch (_: Exception) { 0 }
     val cameraInfo = "$cameraIds cameras detected"
 
     // NFC
@@ -206,9 +220,12 @@ fun getHardwareInfo(context: Context): HardwareInfo {
     val nfcInfo = if (nfcAdapter != null) "Supported" else "Not Supported"
 
     // SIM Slots
-    val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-    val simCount = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        telephonyManager.phoneCount
+    val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
+    val simCount = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        telephonyManager?.supportedModemCount ?: 1
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        @Suppress("DEPRECATION")
+        telephonyManager?.phoneCount ?: 1
     } else {
         1
     }

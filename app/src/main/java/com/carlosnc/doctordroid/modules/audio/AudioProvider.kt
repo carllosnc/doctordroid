@@ -22,6 +22,7 @@ data class AudioInfo(
     val isVolumeFixed: Boolean
 )
 
+@Suppress("DEPRECATION")
 fun getAudioInfo(context: Context): AudioInfo {
     val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     

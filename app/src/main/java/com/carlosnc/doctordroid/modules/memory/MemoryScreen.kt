@@ -22,8 +22,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Memory
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Memory
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,7 +36,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,10 +57,10 @@ import java.util.Locale
 @Composable
 fun MemoryScreen(
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: MemoryViewModel = viewModel()
 ) {
-    val context = LocalContext.current
-    val memoryInfo = remember { getMemoryInfo(context) }
+    val memoryInfo by viewModel.memoryInfo.collectAsState()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -69,7 +70,7 @@ fun MemoryScreen(
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = "Back"
                         )
                     }
@@ -88,7 +89,7 @@ fun MemoryScreen(
             
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 16.dp),
-                thickness = 0.5.dp,
+                thickness = 1.dp,
                 color = MaterialTheme.colorScheme.outlineVariant
             )
             
@@ -243,7 +244,7 @@ fun MemoryDetailItem(label: String, value: String) {
     DashboardListItem(
         title = label,
         subtitle = value,
-        leftIcon = Icons.Default.Memory,
+        leftIcon = Icons.Outlined.Memory,
         rightIcon = null,
         onClick = {}
     )

@@ -1,7 +1,7 @@
-package com.carlosnc.doctordroid.modules.cleaner
+﻿package com.carlosnc.doctordroid.modules.cleaner
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CleaningServices
+import androidx.compose.material.icons.outlined.CleaningServices
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.carlosnc.doctordroid.ui.components.DashboardListItem
@@ -14,7 +14,7 @@ fun FileAnalysisCard(
     DashboardListItem(
         title = "File Analysis",
         subtitle = "Scan storage by file type",
-        leftIcon = Icons.Default.CleaningServices,
+        leftIcon = Icons.Outlined.CleaningServices,
         onClick = onClick,
         modifier = modifier
     )

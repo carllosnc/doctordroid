@@ -10,17 +10,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Alarm
-import androidx.compose.material.icons.filled.GraphicEq
-import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material.icons.filled.MusicNote
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.NotificationsActive
-import androidx.compose.material.icons.filled.SettingsSuggest
-import androidx.compose.material.icons.filled.Speaker
-import androidx.compose.material.icons.filled.VolumeMute
-import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.VolumeMute
+import androidx.compose.material.icons.automirrored.outlined.VolumeUp
+import androidx.compose.material.icons.outlined.Alarm
+import androidx.compose.material.icons.outlined.GraphicEq
+import androidx.compose.material.icons.outlined.Mic
+import androidx.compose.material.icons.outlined.MusicNote
+import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.NotificationsActive
+import androidx.compose.material.icons.outlined.SettingsSuggest
+import androidx.compose.material.icons.outlined.Speaker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -30,7 +30,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -38,16 +40,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.carlosnc.doctordroid.ui.components.DashboardListItem
 import com.carlosnc.doctordroid.ui.components.PageTitle
-import com.carlosnc.doctordroid.ui.components.ProgressListItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AudioScreen(
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: AudioViewModel = viewModel()
 ) {
-    val context = LocalContext.current
-    val audioInfo = remember { getAudioInfo(context) }
+    val audioInfo by viewModel.audioInfo.collectAsState()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -57,7 +58,7 @@ fun AudioScreen(
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = "Back"
                         )
                     }
@@ -72,43 +73,38 @@ fun AudioScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             InfoSection(title = "Volume Levels")
-            
+
             Column(modifier = Modifier.fillMaxWidth()) {
-                VolumeItem(
-                    label = "Media",
-                    level = audioInfo.musicVolume,
-                    max = audioInfo.musicMaxVolume,
-                    icon = Icons.Default.MusicNote
+                DetailRow(
+                    label = "Media Volume",
+                    value = "${audioInfo.musicVolume} / ${audioInfo.musicMaxVolume}",
+                    icon = Icons.Outlined.MusicNote
                 )
-                VolumeItem(
-                    label = "Ring",
-                    level = audioInfo.ringVolume,
-                    max = audioInfo.ringMaxVolume,
-                    icon = Icons.Default.NotificationsActive
+                DetailRow(
+                    label = "Ring Volume",
+                    value = "${audioInfo.ringVolume} / ${audioInfo.ringMaxVolume}",
+                    icon = Icons.Outlined.NotificationsActive
                 )
-                VolumeItem(
-                    label = "Notification",
-                    level = audioInfo.notificationVolume,
-                    max = audioInfo.notificationMaxVolume,
-                    icon = Icons.Default.Notifications
+                DetailRow(
+                    label = "Notification Volume",
+                    value = "${audioInfo.notificationVolume} / ${audioInfo.notificationMaxVolume}",
+                    icon = Icons.Outlined.Notifications
                 )
-                VolumeItem(
-                    label = "Alarm",
-                    level = audioInfo.alarmVolume,
-                    max = audioInfo.alarmMaxVolume,
-                    icon = Icons.Default.Alarm
+                DetailRow(
+                    label = "Alarm Volume",
+                    value = "${audioInfo.alarmVolume} / ${audioInfo.alarmMaxVolume}",
+                    icon = Icons.Outlined.Alarm
                 )
-                VolumeItem(
-                    label = "System",
-                    level = audioInfo.systemVolume,
-                    max = audioInfo.systemMaxVolume,
-                    icon = Icons.Default.SettingsSuggest
+                DetailRow(
+                    label = "System Volume",
+                    value = "${audioInfo.systemVolume} / ${audioInfo.systemMaxVolume}",
+                    icon = Icons.Outlined.SettingsSuggest
                 )
             }
 
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 16.dp),
-                thickness = 0.5.dp,
+                thickness = 1.dp,
                 color = MaterialTheme.colorScheme.outlineVariant
             )
 
@@ -118,28 +114,28 @@ fun AudioScreen(
                 DetailRow(
                     label = "Ringer Mode",
                     value = audioInfo.ringerMode,
-                    icon = Icons.Default.VolumeUp
+                    icon = Icons.AutoMirrored.Outlined.VolumeUp
                 )
                 DetailRow(
                     label = "Microphone",
                     value = if (audioInfo.isMicrophoneOn) "Available" else "Muted",
-                    icon = Icons.Default.Mic
+                    icon = Icons.Outlined.Mic
                 )
                 DetailRow(
                     label = "Music Active",
                     value = if (audioInfo.isMusicActive) "Yes" else "No",
-                    icon = Icons.Default.GraphicEq
+                    icon = Icons.Outlined.GraphicEq
                 )
                 DetailRow(
                     label = "Speakerphone",
                     value = if (audioInfo.isSpeakerphoneOn) "Enabled" else "Disabled",
-                    icon = Icons.Default.Speaker
+                    icon = Icons.Outlined.Speaker
                 )
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     DetailRow(
                         label = "Volume Fixed",
                         value = if (audioInfo.isVolumeFixed) "Yes" else "No",
-                        icon = Icons.Default.VolumeMute
+                        icon = Icons.AutoMirrored.Outlined.VolumeMute
                     )
                 }
             }
@@ -150,27 +146,6 @@ fun AudioScreen(
 }
 
 @Composable
-fun InfoSection(title: String) {
-    Text(
-        text = title.uppercase(),
-        style = MaterialTheme.typography.labelMedium,
-        color = MaterialTheme.colorScheme.primary,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
-    )
-}
-
-@Composable
-fun VolumeItem(label: String, level: Int, max: Int, icon: ImageVector) {
-    ProgressListItem(
-        title = label,
-        value = "$level / $max",
-        progress = level.toFloat() / max.coerceAtLeast(1),
-        icon = icon
-    )
-}
-
-@Composable
 fun DetailRow(label: String, value: String, icon: ImageVector) {
     DashboardListItem(
         title = label,
@@ -178,5 +153,16 @@ fun DetailRow(label: String, value: String, icon: ImageVector) {
         leftIcon = icon,
         rightIcon = null,
         onClick = {}
+    )
+}
+
+@Composable
+fun InfoSection(title: String) {
+    Text(
+        text = title.uppercase(),
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.primary,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
     )
 }

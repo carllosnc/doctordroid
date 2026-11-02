@@ -15,13 +15,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.CameraAlt
-import androidx.compose.material.icons.filled.CameraFront
-import androidx.compose.material.icons.filled.CameraRear
-import androidx.compose.material.icons.filled.FlashOn
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.CameraAlt
+import androidx.compose.material.icons.outlined.CameraFront
+import androidx.compose.material.icons.outlined.CameraRear
+import androidx.compose.material.icons.outlined.FlashOn
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Videocam
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,7 +30,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -44,10 +46,10 @@ import com.carlosnc.doctordroid.ui.components.PageTitle
 @Composable
 fun CameraScreen(
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: CameraViewModel = viewModel()
 ) {
-    val context = LocalContext.current
-    val cameraInfoList = remember { getCameraDetails(context) }
+    val cameraInfoList by viewModel.cameras.collectAsState()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -57,7 +59,7 @@ fun CameraScreen(
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = "Back"
                         )
                     }
@@ -79,27 +81,27 @@ fun CameraScreen(
                 CameraDetailItem(
                     label = "Resolution",
                     value = cameraInfo.resolution,
-                    icon = if (cameraInfo.facing == "Back") Icons.Default.CameraRear else Icons.Default.CameraFront
+                    icon = if (cameraInfo.facing == "Back") Icons.Outlined.CameraRear else Icons.Outlined.CameraFront
                 )
                 CameraDetailItem(
                     label = "MegaPixels",
                     value = cameraInfo.megaPixels,
-                    icon = Icons.Default.CameraAlt
+                    icon = Icons.Outlined.CameraAlt
                 )
                 CameraDetailItem(
                     label = "Flash Support",
                     value = cameraInfo.hasFlash,
-                    icon = Icons.Default.FlashOn
+                    icon = Icons.Outlined.FlashOn
                 )
                 CameraDetailItem(
                     label = "Sensor Size",
                     value = cameraInfo.sensorSize,
-                    icon = Icons.Default.Settings
+                    icon = Icons.Outlined.Settings
                 )
                 CameraDetailItem(
                     label = "Video Support",
                     value = cameraInfo.videoCapabilities,
-                    icon = Icons.Default.Videocam
+                    icon = Icons.Outlined.Videocam
                 )
                 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -120,7 +122,7 @@ fun CameraHeader(cameraCount: Int) {
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(
-                imageVector = Icons.Default.CameraAlt,
+                imageVector = Icons.Outlined.CameraAlt,
                 contentDescription = null,
                 modifier = Modifier.size(48.dp),
                 tint = MaterialTheme.colorScheme.primary

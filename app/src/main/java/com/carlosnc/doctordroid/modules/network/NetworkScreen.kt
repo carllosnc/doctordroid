@@ -19,16 +19,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AltRoute
-import androidx.compose.material.icons.filled.Bluetooth
-import androidx.compose.material.icons.filled.Dns
-import androidx.compose.material.icons.filled.NetworkCheck
-import androidx.compose.material.icons.filled.Public
-import androidx.compose.material.icons.filled.Router
-import androidx.compose.material.icons.filled.SettingsInputAntenna
-import androidx.compose.material.icons.filled.Wifi
-import androidx.compose.material.icons.filled.WifiTethering
+import androidx.compose.material.icons.automirrored.outlined.AltRoute
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Bluetooth
+import androidx.compose.material.icons.outlined.Dns
+import androidx.compose.material.icons.outlined.NetworkCheck
+import androidx.compose.material.icons.outlined.Public
+import androidx.compose.material.icons.outlined.Router
+import androidx.compose.material.icons.outlined.SettingsInputAntenna
+import androidx.compose.material.icons.outlined.Wifi
+import androidx.compose.material.icons.outlined.WifiTethering
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -42,6 +42,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -51,6 +53,9 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.carlosnc.doctordroid.ui.components.DashboardListItem
 import com.carlosnc.doctordroid.ui.components.PageTitle
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.net.NetworkInterface
 import java.util.Collections
 
@@ -58,16 +63,17 @@ import java.util.Collections
 @Composable
 fun NetworkScreen(
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: NetworkViewModel = viewModel()
 ) {
     val context = LocalContext.current
-    var networkInfo by remember { mutableStateOf(getNetworkDetails(context)) }
+    val networkInfo by viewModel.networkInfo.collectAsState()
     
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            networkInfo = getNetworkDetails(context)
+            viewModel.refresh()
         }
     }
 
@@ -89,7 +95,7 @@ fun NetworkScreen(
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = "Back"
                         )
                     }
@@ -103,27 +109,27 @@ fun NetworkScreen(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            InfoSection(title = "Connection")
+            InfoSection(title = "Connection Status")
             ConnectionInfoContent(networkInfo)
-            
+
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 16.dp),
-                thickness = 0.5.dp,
+                thickness = 1.dp,
                 color = MaterialTheme.colorScheme.outlineVariant
             )
-            
-            InfoSection(title = "WiFi Details")
+
+            InfoSection(title = "Wi-Fi Details")
             WifiInfoContent(networkInfo)
 
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 16.dp),
-                thickness = 0.5.dp,
+                thickness = 1.dp,
                 color = MaterialTheme.colorScheme.outlineVariant
             )
 
-            InfoSection(title = "IP Addresses")
-            IpInfoContent(networkInfo)
-            
+            InfoSection(title = "IP & Hardware Addresses")
+            IpAddressContent(networkInfo)
+
             Box(modifier = Modifier.height(32.dp))
         }
     }
@@ -132,52 +138,52 @@ fun NetworkScreen(
 @Composable
 fun ConnectionInfoContent(networkInfo: NetworkDetails) {
     Column {
-        InfoItem(label = "Status", value = networkInfo.status, icon = Icons.Default.NetworkCheck)
-        InfoItem(label = "Type", value = networkInfo.type, icon = Icons.Default.AltRoute)
-        InfoItem(label = "Data State", value = networkInfo.dataState, icon = Icons.Default.Public)
-        InfoItem(label = "Roaming", value = networkInfo.roaming, icon = Icons.Default.SettingsInputAntenna)
+        InfoItem(label = "Status", value = networkInfo.status, icon = Icons.Outlined.NetworkCheck)
+        InfoItem(label = "Type", value = networkInfo.type, icon = Icons.AutoMirrored.Outlined.AltRoute)
+        InfoItem(label = "Data State", value = networkInfo.dataState, icon = Icons.Outlined.Public)
+        InfoItem(label = "Roaming", value = networkInfo.roaming, icon = Icons.Outlined.SettingsInputAntenna)
     }
 }
 
 @Composable
 fun WifiInfoContent(networkInfo: NetworkDetails) {
     Column {
-        InfoItem(label = "SSID", value = networkInfo.wifiSsid, icon = Icons.Default.Wifi)
-        InfoItem(label = "BSSID", value = networkInfo.wifiBssid, icon = Icons.Default.Router)
-        InfoItem(label = "Standard", value = networkInfo.wifiStandard, icon = Icons.Default.Wifi)
-        InfoItem(label = "Frequency", value = networkInfo.wifiFreq, icon = Icons.Default.WifiTethering)
-        InfoItem(label = "Link Speed", value = networkInfo.wifiLinkSpeed, icon = Icons.Default.NetworkCheck)
+        InfoItem(label = "SSID", value = networkInfo.wifiSsid, icon = Icons.Outlined.Wifi)
+        InfoItem(label = "BSSID", value = networkInfo.wifiBssid, icon = Icons.Outlined.Router)
+        InfoItem(label = "Standard", value = networkInfo.wifiStandard, icon = Icons.Outlined.WifiTethering)
+        InfoItem(label = "Frequency", value = networkInfo.wifiFreq, icon = Icons.Outlined.SettingsInputAntenna)
+        InfoItem(label = "Link Speed", value = networkInfo.wifiLinkSpeed, icon = Icons.Outlined.NetworkCheck)
     }
 }
 
 @Composable
-fun IpInfoContent(networkInfo: NetworkDetails) {
+fun IpAddressContent(networkInfo: NetworkDetails) {
     Column {
-        InfoItem(label = "IPv4 Address", value = networkInfo.ipv4, icon = Icons.Default.Dns)
-        InfoItem(label = "IPv6 Address", value = networkInfo.ipv6, icon = Icons.Default.Public)
-        InfoItem(label = "MAC Address", value = networkInfo.macAddress, icon = Icons.Default.Bluetooth)
+        InfoItem(label = "IPv4 Address", value = networkInfo.ipv4, icon = Icons.Outlined.Dns)
+        InfoItem(label = "IPv6 Address", value = networkInfo.ipv6, icon = Icons.Outlined.Dns)
+        InfoItem(label = "Bluetooth", value = "Supported", icon = Icons.Outlined.Bluetooth)
     }
 }
 
 @Composable
-private fun InfoSection(title: String) {
-    Text(
-        text = title.uppercase(),
-        style = MaterialTheme.typography.labelMedium,
-        color = MaterialTheme.colorScheme.primary,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
-    )
-}
-
-@Composable
-private fun InfoItem(label: String, value: String, icon: ImageVector) {
+fun InfoItem(label: String, value: String, icon: ImageVector) {
     DashboardListItem(
         title = label,
         subtitle = value,
         leftIcon = icon,
         rightIcon = null,
         onClick = {}
+    )
+}
+
+@Composable
+fun InfoSection(title: String) {
+    Text(
+        text = title.uppercase(),
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.primary,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp)
     )
 }
 
@@ -231,6 +237,7 @@ fun getNetworkDetails(context: Context): NetworkDetails {
 
     try {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_WIFI_STATE) == PackageManager.PERMISSION_GRANTED) {
+            @Suppress("DEPRECATION")
             val wifiInfo = wm.connectionInfo
             if (wifiInfo != null) {
                 ssid = if (wifiInfo.networkId != -1) wifiInfo.ssid.removeSurrounding("\"") else "N/A"
@@ -250,7 +257,7 @@ fun getNetworkDetails(context: Context): NetworkDetails {
                 }
             }
         }
-    } catch (e: SecurityException) {
+    } catch (_: SecurityException) {
         ssid = "Permission Denied"
     }
 
@@ -273,9 +280,9 @@ fun getNetworkDetails(context: Context): NetworkDetails {
                 }
             }
         }
-    } catch (e: Exception) {}
+    } catch (_: Exception) {}
 
-    val macAddress = "N/A" // Placeholder as getting MAC address is restricted in newer Android versions
+    val macAddress = "N/A"
 
     return NetworkDetails(
         status = status,

@@ -1,7 +1,7 @@
-package com.carlosnc.doctordroid.modules.gpu
+﻿package com.carlosnc.doctordroid.modules.gpu
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.GraphicEq
+import androidx.compose.material.icons.outlined.GraphicEq
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.carlosnc.doctordroid.ui.components.DashboardListItem
@@ -14,7 +14,7 @@ fun GpuCard(
     DashboardListItem(
         title = "GPU & Graphics",
         subtitle = "Renderer & graphics info",
-        leftIcon = Icons.Default.GraphicEq,
+        leftIcon = Icons.Outlined.GraphicEq,
         onClick = onClick,
         modifier = modifier
     )

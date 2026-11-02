@@ -1,7 +1,7 @@
-package com.carlosnc.doctordroid.modules.cpu
+﻿package com.carlosnc.doctordroid.modules.cpu
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Speed
+import androidx.compose.material.icons.outlined.Speed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.carlosnc.doctordroid.ui.components.DashboardListItem
@@ -14,7 +14,7 @@ fun CpuCard(
     DashboardListItem(
         title = "CPU & Performance",
         subtitle = "Processor & system speed",
-        leftIcon = Icons.Default.Speed,
+        leftIcon = Icons.Outlined.Speed,
         onClick = onClick,
         modifier = modifier
     )

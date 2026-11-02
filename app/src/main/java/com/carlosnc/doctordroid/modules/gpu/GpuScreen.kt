@@ -1,4 +1,4 @@
-package com.carlosnc.doctordroid.modules.gpu
+﻿package com.carlosnc.doctordroid.modules.gpu
 
 import android.app.ActivityManager
 import android.content.Context
@@ -16,12 +16,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.DeveloperMode
-import androidx.compose.material.icons.filled.GraphicEq
-import androidx.compose.material.icons.filled.Layers
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ViewInAr
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.DeveloperMode
+import androidx.compose.material.icons.outlined.GraphicEq
+import androidx.compose.material.icons.outlined.Layers
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.ViewInAr
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -110,7 +110,7 @@ fun GpuScreen(
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = "Back"
                         )
                     }
@@ -143,12 +143,12 @@ fun GpuScreen(
                 GpuDetailItem(
                     label = "OpenGL Version",
                     value = gpuInfo!!.version,
-                    icon = Icons.Default.Layers
+                    icon = Icons.Outlined.Layers
                 )
                 GpuDetailItem(
                     label = "Vendor",
                     value = gpuInfo!!.vendor,
-                    icon = Icons.Default.Settings
+                    icon = Icons.Outlined.Settings
                 )
                 
                 val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
@@ -156,7 +156,7 @@ fun GpuScreen(
                 GpuDetailItem(
                     label = "GLES Version",
                     value = configInfo.glEsVersion,
-                    icon = Icons.Default.DeveloperMode
+                    icon = Icons.Outlined.DeveloperMode
                 )
 
                 InfoSection(title = "Capabilities")
@@ -164,7 +164,7 @@ fun GpuScreen(
                 GpuDetailItem(
                     label = "GL Extensions",
                     value = "$extensionCount supported",
-                    icon = Icons.Default.ViewInAr
+                    icon = Icons.Outlined.ViewInAr
                 )
                 
                 Spacer(modifier = Modifier.height(32.dp))
@@ -183,7 +183,7 @@ fun GpuHeaderCard(gpuInfo: GpuInfo?) {
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(
-                imageVector = Icons.Default.GraphicEq,
+                imageVector = Icons.Outlined.GraphicEq,
                 contentDescription = null,
                 modifier = Modifier.size(48.dp),
                 tint = MaterialTheme.colorScheme.primary

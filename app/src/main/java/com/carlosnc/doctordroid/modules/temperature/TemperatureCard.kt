@@ -1,7 +1,7 @@
-package com.carlosnc.doctordroid.modules.temperature
+﻿package com.carlosnc.doctordroid.modules.temperature
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Thermostat
+import androidx.compose.material.icons.outlined.Thermostat
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.carlosnc.doctordroid.ui.components.DashboardListItem
@@ -14,7 +14,7 @@ fun TemperatureCard(
     DashboardListItem(
         title = "Temperature",
         subtitle = "CPU, Battery & Sensors",
-        leftIcon = Icons.Default.Thermostat,
+        leftIcon = Icons.Outlined.Thermostat,
         onClick = onClick,
         modifier = modifier
     )

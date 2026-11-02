@@ -2,7 +2,7 @@ package com.carlosnc.doctordroid.modules.device
 
 import android.os.Build
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PhoneAndroid
+import androidx.compose.material.icons.outlined.PhoneAndroid
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,6 +19,8 @@ data class DeviceInfo(
     val brand: String,
     val model: String
 )
+
+fun getDeviceInfo(): DeviceInfo = DeviceInfo(Build.DEVICE, Build.MANUFACTURER, Build.MODEL)
 
 @Composable
 fun rememberDeviceInfo(): DeviceInfo? {
@@ -44,7 +46,7 @@ fun DeviceCard(onClick: () -> Unit, modifier: Modifier = Modifier) {
     DashboardListItem(
         title = "Device",
         subtitle = subtitle,
-        leftIcon = Icons.Default.PhoneAndroid,
+        leftIcon = Icons.Outlined.PhoneAndroid,
         onClick = onClick,
         modifier = modifier
     )
