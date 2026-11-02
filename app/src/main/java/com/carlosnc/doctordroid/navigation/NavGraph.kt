@@ -1,7 +1,10 @@
 package com.carlosnc.doctordroid.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -23,6 +26,8 @@ import com.carlosnc.doctordroid.screens.DeviceResumeScreen
 import com.carlosnc.doctordroid.screens.HomeScreen
 import com.carlosnc.doctordroid.screens.QuickControlScreen
 import kotlinx.serialization.Serializable
+
+private const val NAV_ANIM_DURATION = 300
 
 @Serializable
 object Home
@@ -82,27 +87,27 @@ fun AppNavHost(
         modifier = modifier,
         enterTransition = {
             slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                animationSpec = tween(400)
-            )
+                towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                animationSpec = tween(NAV_ANIM_DURATION, easing = FastOutSlowInEasing)
+            ) + fadeIn(animationSpec = tween(NAV_ANIM_DURATION, easing = FastOutSlowInEasing))
         },
         exitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                animationSpec = tween(400)
-            )
+                towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                animationSpec = tween(NAV_ANIM_DURATION, easing = FastOutSlowInEasing)
+            ) + fadeOut(animationSpec = tween(NAV_ANIM_DURATION, easing = FastOutSlowInEasing))
         },
         popEnterTransition = {
             slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                animationSpec = tween(400)
-            )
+                towards = AnimatedContentTransitionScope.SlideDirection.End,
+                animationSpec = tween(NAV_ANIM_DURATION, easing = FastOutSlowInEasing)
+            ) + fadeIn(animationSpec = tween(NAV_ANIM_DURATION, easing = FastOutSlowInEasing))
         },
         popExitTransition = {
             slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                animationSpec = tween(400)
-            )
+                towards = AnimatedContentTransitionScope.SlideDirection.End,
+                animationSpec = tween(NAV_ANIM_DURATION, easing = FastOutSlowInEasing)
+            ) + fadeOut(animationSpec = tween(NAV_ANIM_DURATION, easing = FastOutSlowInEasing))
         }
     ) {
         composable<Home> {

@@ -1,4 +1,4 @@
-package com.carlosnc.doctordroid.screens
+﻿package com.carlosnc.doctordroid.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,9 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.Speed
-import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.Speed
+import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -70,21 +70,21 @@ fun HomeScreen(
                 actions = {
                     IconButton(onClick = onDeviceResumeClick) {
                         Icon(
-                            imageVector = Icons.Default.Description,
+                            imageVector = Icons.Outlined.Description,
                             contentDescription = "Device Resume",
                             tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                     IconButton(onClick = onQuickControlClick) {
                         Icon(
-                            imageVector = Icons.Default.Tune,
+                            imageVector = Icons.Outlined.Tune,
                             contentDescription = "Quick Controls",
                             tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                     IconButton(onClick = onToggleFloatingMonitor) {
                         Icon(
-                            imageVector = Icons.Default.Speed,
+                            imageVector = Icons.Outlined.Speed,
                             contentDescription = "Toggle Floating Monitor",
                             tint = if (isMonitorActive) Color.Red else MaterialTheme.colorScheme.onSurface
                         )

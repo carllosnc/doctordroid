@@ -1,6 +1,5 @@
 package com.carlosnc.doctordroid.services
 
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
@@ -9,6 +8,7 @@ import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
+import android.view.Choreographer
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
@@ -22,7 +22,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -32,6 +33,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.NotificationCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
@@ -49,7 +51,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import android.view.Choreographer
 import java.util.Locale
 
 class FloatingMonitorService : Service(), LifecycleOwner, ViewModelStoreOwner, SavedStateRegistryOwner {
@@ -90,20 +91,15 @@ class FloatingMonitorService : Service(), LifecycleOwner, ViewModelStoreOwner, S
                 "Floating Monitor Service",
                 NotificationManager.IMPORTANCE_LOW
             )
-            (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(channel)
+            val nm = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+            nm?.createNotificationChannel(channel)
         }
 
-        val notification = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Notification.Builder(this, channelId)
-                .setContentTitle("Floating Monitor Active")
-                .setSmallIcon(android.R.drawable.ic_menu_info_details)
-                .build()
-        } else {
-            Notification.Builder(this)
-                .setContentTitle("Floating Monitor Active")
-                .setSmallIcon(android.R.drawable.ic_menu_info_details)
-                .build()
-        }
+        val notification = NotificationCompat.Builder(this, channelId)
+            .setContentTitle("Floating Monitor Active")
+            .setSmallIcon(android.R.drawable.ic_menu_info_details)
+            .setOngoing(true)
+            .build()
 
         startForeground(1, notification)
     }
@@ -136,20 +132,26 @@ class FloatingMonitorService : Service(), LifecycleOwner, ViewModelStoreOwner, S
                     onDrag = { dx, dy ->
                         layoutParams.x += dx.toInt()
                         layoutParams.y += dy.toInt()
-                        windowManager.updateViewLayout(this, layoutParams)
+                        try {
+                            windowManager.updateViewLayout(this, layoutParams)
+                        } catch (_: Exception) {}
                     }
                 )
             }
         }
 
         floatingView = composeView
-        windowManager.addView(floatingView, layoutParams)
+        try {
+            windowManager.addView(floatingView, layoutParams)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     @Composable
     private fun FloatingMonitorContent(onDrag: (Float, Float) -> Unit) {
-        var fps by remember { mutableStateOf(0) }
-        var temperature by remember { mutableStateOf(0f) }
+        var fps by remember { mutableIntStateOf(0) }
+        var temperature by remember { mutableFloatStateOf(0f) }
 
         // Update Temperature
         LaunchedEffect(Unit) {
@@ -220,9 +222,13 @@ class FloatingMonitorService : Service(), LifecycleOwner, ViewModelStoreOwner, S
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
         serviceJob.cancel()
-        if (floatingView != null) {
-            windowManager.removeView(floatingView)
+        store.clear()
+        floatingView?.let { view ->
+            try {
+                windowManager.removeView(view)
+            } catch (_: Exception) {}
         }
+        floatingView = null
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
