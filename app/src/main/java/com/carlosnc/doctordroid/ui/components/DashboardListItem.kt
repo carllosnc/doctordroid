@@ -1,8 +1,8 @@
-package com.carlosnc.doctordroid.ui.components
+﻿package com.carlosnc.doctordroid.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -20,7 +20,7 @@ fun DashboardListItem(
     subtitle: String,
     leftIcon: ImageVector,
     modifier: Modifier = Modifier,
-    rightIcon: ImageVector? = Icons.Default.ChevronRight,
+    rightIcon: ImageVector? = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
     trailingContent: @Composable (() -> Unit)? = null,
     onClick: () -> Unit
 ) {
@@ -31,7 +31,7 @@ fun DashboardListItem(
                 Icon(
                     imageVector = rightIcon,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -44,7 +44,8 @@ fun DashboardListItem(
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface
             )
         },
         supportingContent = {

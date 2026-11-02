@@ -11,56 +11,47 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Blue400,
-    onPrimary = Blue950,
-    primaryContainer = Blue900,
-    onPrimaryContainer = Blue100,
-    secondary = Blue300,
-    onSecondary = Blue950,
-    secondaryContainer = Blue800,
-    onSecondaryContainer = Blue100,
-    tertiary = Blue200,
-    onTertiary = Blue900,
-    tertiaryContainer = Blue700,
-    onTertiaryContainer = Blue50,
-    background = Blue900, // Lightened from Blue950
-    onBackground = Blue50,
-    surface = Blue900, // Lightened from Blue950
-    onSurface = Blue50,
-    surfaceVariant = Blue800, // Lightened from Blue900 to maintain contrast
-    onSurfaceVariant = Blue200,
-    outline = Blue500,
-    outlineVariant = Blue700
+    primary = PrimaryDark,
+    onPrimary = OnPrimaryDark,
+    primaryContainer = PrimaryContainerDark,
+    onPrimaryContainer = OnPrimaryContainerDark,
+    secondary = SecondaryDark,
+    onSecondary = OnSecondaryDark,
+    secondaryContainer = SecondaryContainerDark,
+    onSecondaryContainer = OnSecondaryContainerDark,
+    background = BackgroundDark,
+    onBackground = OnBackgroundDark,
+    surface = SurfaceDark,
+    onSurface = OnSurfaceDark,
+    surfaceVariant = SurfaceVariantDark,
+    onSurfaceVariant = OnSurfaceVariantDark,
+    outline = OutlineDark,
+    outlineVariant = OutlineVariantDark
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Blue600,
-    onPrimary = Blue50,
-    primaryContainer = Blue100,
-    onPrimaryContainer = Blue900,
-    secondary = Blue500,
-    onSecondary = Blue50,
-    secondaryContainer = Blue100,
-    onSecondaryContainer = Blue800,
-    tertiary = Blue400,
-    onTertiary = Blue50,
-    tertiaryContainer = Blue50,
-    onTertiaryContainer = Blue950,
-    background = Blue50,
-    onBackground = Blue950,
-    surface = Blue50,
-    onSurface = Blue950,
-    surfaceVariant = Blue100,
-    onSurfaceVariant = Blue950,
-    outline = Blue400,
-    outlineVariant = Blue300
+    primary = PrimaryLight,
+    onPrimary = OnPrimaryLight,
+    primaryContainer = PrimaryContainerLight,
+    onPrimaryContainer = OnPrimaryContainerLight,
+    secondary = SecondaryLight,
+    onSecondary = OnSecondaryLight,
+    secondaryContainer = SecondaryContainerLight,
+    onSecondaryContainer = OnSecondaryContainerLight,
+    background = BackgroundLight,
+    onBackground = OnBackgroundLight,
+    surface = SurfaceLight,
+    onSurface = OnSurfaceLight,
+    surfaceVariant = SurfaceVariantLight,
+    onSurfaceVariant = OnSurfaceVariantLight,
+    outline = OutlineLight,
+    outlineVariant = OutlineVariantLight
 )
 
 @Composable
 fun DoctordroidTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = false, // Set to false to see the custom dark theme colors
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -68,7 +59,6 @@ fun DoctordroidTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
@@ -76,6 +66,7 @@ fun DoctordroidTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
+        shapes = Shapes,
         content = content
     )
 }
