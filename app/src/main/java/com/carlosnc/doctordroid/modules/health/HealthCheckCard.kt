@@ -1,7 +1,7 @@
-package com.carlosnc.doctordroid.modules.health
+﻿package com.carlosnc.doctordroid.modules.health
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.HealthAndSafety
+import androidx.compose.material.icons.outlined.HealthAndSafety
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.carlosnc.doctordroid.ui.components.DashboardListItem
@@ -14,7 +14,7 @@ fun HealthCheckCard(
     DashboardListItem(
         title = "Health Check",
         subtitle = "Sensor & Hardware diagnostics",
-        leftIcon = Icons.Default.HealthAndSafety,
+        leftIcon = Icons.Outlined.HealthAndSafety,
         onClick = onClick,
         modifier = modifier
     )
