@@ -1,4 +1,4 @@
-﻿package com.carlosnc.doctordroid.ui.components
+package com.carlosnc.doctordroid.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
@@ -59,6 +59,6 @@ fun DashboardListItem(
             ListIcon(icon = leftIcon)
         },
         trailingContent = trailing,
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+        colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surface)
     )
 }

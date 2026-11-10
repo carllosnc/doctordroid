@@ -331,7 +331,7 @@ fun CategoryRow(category: FileCategory, totalUsed: Long) {
         leadingContent = {
             ListIcon(icon = category.icon)
         },
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+        colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surface)
     )
 }
 

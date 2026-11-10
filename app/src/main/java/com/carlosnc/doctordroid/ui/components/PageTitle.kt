@@ -5,8 +5,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
-import java.util.Locale
 
 @Composable
 fun PageTitle(
@@ -14,11 +12,10 @@ fun PageTitle(
     modifier: Modifier = Modifier
 ) {
     Text(
-        text = text.uppercase(Locale.getDefault()),
+        text = text,
         modifier = modifier,
-        style = MaterialTheme.typography.titleSmall.copy(
-            fontWeight = FontWeight.ExtraBold,
-            letterSpacing = 1.sp
+        style = MaterialTheme.typography.titleLarge.copy(
+            fontWeight = FontWeight.Bold
         )
     )
 }

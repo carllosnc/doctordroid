@@ -25,13 +25,13 @@ val SecondaryContainerDark = Color(0xFF164E63)
 val OnSecondaryContainerDark = Color(0xFFE0F2FE)
 
 // Surfaces & Backgrounds - Light Theme
-val BackgroundLight = Color(0xFFF8FAFC)        // Slate 50
+val BackgroundLight = Color(0xFFFFFFFF)        // Pure White Canvas
 val OnBackgroundLight = Color(0xFF0F172A)      // Slate 900
 val SurfaceLight = Color(0xFFFFFFFF)           // Crisp White Card
 val OnSurfaceLight = Color(0xFF0F172A)         // Slate 900
-val SurfaceVariantLight = Color(0xFFF1F5F9)    // Slate 100 (Secondary card background)
+val SurfaceVariantLight = Color(0xFFF8FAFC)    // Very soft neutral Slate 50
 val OnSurfaceVariantLight = Color(0xFF475569)  // Slate 600
-val OutlineLight = Color(0xFF94A3B8)           // Slate 400
+val OutlineLight = Color(0xFFCBD5E1)           // Slate 300
 val OutlineVariantLight = Color(0xFFE2E8F0)    // Slate 200 (Crisp 1.dp dividers and borders)
 
 // Surfaces & Backgrounds - Dark Theme

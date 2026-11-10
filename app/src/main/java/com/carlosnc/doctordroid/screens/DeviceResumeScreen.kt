@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -46,14 +47,15 @@ import androidx.compose.material.icons.outlined.Speed
 import androidx.compose.material.icons.outlined.Verified
 import androidx.compose.material.icons.outlined.Wifi
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -66,11 +68,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
@@ -154,226 +159,182 @@ fun DeviceResumeScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                .padding(horizontal = 16.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Main Certificate Card
-            Card(
+            // 1. Device Header (Clean hierarchy: Hero device name + Report subtitle)
+            val displayName = formatDeviceDisplayName(brand, model)
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                ),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Column(
+                Text(
+                    text = displayName,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = "Emitido em $formattedDate",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            // 2. Harmonious Status Banner (Unified Certification & Health Score)
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                color = scoreColor.copy(alpha = 0.08f),
+                border = BorderStroke(1.dp, scoreColor.copy(alpha = 0.25f))
+            ) {
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                        .padding(horizontal = 16.dp, vertical = 14.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Header Badge
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                    Box(
+                        modifier = Modifier
+                            .size(42.dp)
+                            .clip(CircleShape)
+                            .background(scoreColor.copy(alpha = 0.15f)),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Surface(
-                            shape = CircleShape,
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f))
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Verified,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(14.dp)
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    text = "DOCTOR DROID CERTIFIED",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    fontWeight = FontWeight.Black,
-                                    letterSpacing = 0.8.sp
-                                )
-                            }
-                        }
-
-                        Text(
-                            text = formattedDate,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        Icon(
+                            imageVector = Icons.Outlined.Verified,
+                            contentDescription = null,
+                            tint = scoreColor,
+                            modifier = Modifier.size(24.dp)
                         )
                     }
 
-                    // Device Title
-                    Column {
+                    Spacer(modifier = Modifier.width(14.dp))
+
+                    Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = brand.uppercase(),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary,
+                            text = healthRating,
+                            style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            letterSpacing = 1.5.sp
+                            color = MaterialTheme.colorScheme.onSurface,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = model,
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = MaterialTheme.colorScheme.onSurface
+                            text = "DoctorDroid Certified",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = scoreColor,
+                            fontWeight = FontWeight.Medium
                         )
                     }
 
-                    // Dynamic Health Score Banner
+                    Spacer(modifier = Modifier.width(10.dp))
+
                     Surface(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(14.dp),
-                        color = scoreColor.copy(alpha = 0.10f),
-                        border = BorderStroke(1.dp, scoreColor.copy(alpha = 0.35f))
+                        shape = RoundedCornerShape(10.dp),
+                        color = scoreColor
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 12.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Outlined.CheckCircle,
-                                    contentDescription = null,
-                                    tint = scoreColor,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                                Spacer(modifier = Modifier.width(10.dp))
-                                Column {
-                                    Text(
-                                        text = "Status de Integridade",
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                    Text(
-                                        text = healthRating,
-                                        style = MaterialTheme.typography.titleSmall,
-                                        fontWeight = FontWeight.Bold,
-                                        color = scoreColor
-                                    )
-                                }
-                            }
-
-                            Surface(
-                                shape = CircleShape,
-                                color = scoreColor,
-                                modifier = Modifier.padding(start = 8.dp)
-                            ) {
-                                Text(
-                                    text = "$healthScore pts",
-                                    color = Color.White,
-                                    style = MaterialTheme.typography.labelMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-                                )
-                            }
-                        }
-                    }
-
-                    HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
-
-                    // 4 Quick Highlight Cards
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        HighlightMiniCard(
-                            icon = Icons.Outlined.Memory,
-                            label = "RAM",
-                            value = formatMemorySize(memoryInfo.totalMem),
-                            subValue = "${formatMemorySize(memoryInfo.availMem)} livre",
-                            modifier = Modifier.weight(1f)
+                        Text(
+                            text = "$healthScore pts",
+                            color = Color.White,
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                         )
-                        HighlightMiniCard(
-                            icon = Icons.Outlined.SdStorage,
-                            label = "Espaço",
-                            value = formatSize(storageInfo.totalBytes),
-                            subValue = "${(100 - storageUsedPct.toInt())}% livre",
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        HighlightMiniCard(
-                            icon = Icons.Outlined.Battery0Bar,
-                            label = "Bateria",
-                            value = "${batteryInfo.level}%",
-                            subValue = "${batteryInfo.health} • ${batteryTempC}°C",
-                            modifier = Modifier.weight(1f)
-                        )
-                        HighlightMiniCard(
-                            icon = Icons.Outlined.Speed,
-                            label = "Processador",
-                            value = "$coreCount Cores",
-                            subValue = processorName,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-
-                    HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
-
-                    // Detailed Technical Sections
-                    ResumeSection(title = "IDENTIFICAÇÃO", icon = Icons.Outlined.PhoneAndroid) {
-                        ResumeItem("Fabricante", brand)
-                        ResumeItem("Modelo", model)
-                        ResumeItem("Dispositivo", Build.DEVICE)
-                        ResumeItem("Placa", Build.BOARD)
-                    }
-
-                    HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
-
-                    ResumeSection(title = "TELA & DISPLAY", icon = Icons.Outlined.DisplaySettings) {
-                        ResumeItem("Resolução Nativa", displayInfo.first)
-                        ResumeItem("Taxa de Atualização", displayInfo.second)
-                    }
-
-                    HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
-
-                    ResumeSection(title = "CONECTIVIDADE", icon = Icons.Outlined.Wifi) {
-                        ResumeItem("Tipo de Rede", networkInfo.type)
-                        if (networkInfo.type == "WiFi") {
-                            ResumeItem("Padrão Wi-Fi", networkInfo.wifiStandard)
-                        }
-                        ResumeItem("Configuração SIM", simInfo)
-                    }
-
-                    HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
-
-                    ResumeSection(title = "ENERGIA & BATERIA", icon = Icons.Outlined.Battery0Bar) {
-                        ResumeItem("Nível de Carga", "${batteryInfo.level}%")
-                        ResumeItem("Status", batteryInfo.status)
-                        ResumeItem("Saúde da Bateria", batteryInfo.health)
-                        ResumeItem("Temperatura", "${batteryTempC}°C")
-                        ResumeItem("Tecnologia", batteryInfo.technology)
-                    }
-
-                    HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
-
-                    ResumeSection(title = "SISTEMA & SEGURANÇA", icon = Icons.Outlined.Security) {
-                        ResumeItem("Versão do Android", "Android ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})")
-                        ResumeItem("Patch de Segurança", securityPatch)
-                        ResumeItem("Arquitetura ABI", Build.SUPPORTED_ABIS.firstOrNull() ?: "arm64-v8a")
                     }
                 }
             }
 
-            // Action Buttons (Full Rounded)
+            // 4 Quick Highlight Cards
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                HighlightMiniCard(
+                    icon = Icons.Outlined.Memory,
+                    label = "RAM",
+                    value = formatMemorySize(memoryInfo.totalMem),
+                    subValue = "${formatMemorySize(memoryInfo.availMem)} livre",
+                    modifier = Modifier.weight(1f)
+                )
+                HighlightMiniCard(
+                    icon = Icons.Outlined.SdStorage,
+                    label = "Espaço",
+                    value = formatSize(storageInfo.totalBytes),
+                    subValue = "${(100 - storageUsedPct.toInt())}% livre",
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                HighlightMiniCard(
+                    icon = Icons.Outlined.Battery0Bar,
+                    label = "Bateria",
+                    value = "${batteryInfo.level}%",
+                    subValue = "${batteryInfo.health} • ${batteryTempC}°C",
+                    modifier = Modifier.weight(1f)
+                )
+                HighlightMiniCard(
+                    icon = Icons.Outlined.Speed,
+                    label = "Processador",
+                    value = "$coreCount Cores",
+                    subValue = processorName,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
+
+            // Detailed Technical Sections
+            ResumeSection(title = "Identificação", icon = Icons.Outlined.PhoneAndroid) {
+                ResumeItem("Fabricante", brand)
+                ResumeItem("Modelo", model)
+                ResumeItem("Dispositivo", Build.DEVICE)
+                ResumeItem("Placa", Build.BOARD)
+            }
+
+            HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
+
+            ResumeSection(title = "Tela & Display", icon = Icons.Outlined.DisplaySettings) {
+                ResumeItem("Resolução Nativa", displayInfo.first)
+                ResumeItem("Taxa de Atualização", displayInfo.second)
+            }
+
+            HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
+
+            ResumeSection(title = "Conectividade", icon = Icons.Outlined.Wifi) {
+                ResumeItem("Tipo de Rede", networkInfo.type)
+                if (networkInfo.type == "WiFi") {
+                    ResumeItem("Padrão Wi-Fi", networkInfo.wifiStandard)
+                }
+                ResumeItem("Configuração SIM", simInfo)
+            }
+
+            HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
+
+            ResumeSection(title = "Energia & Bateria", icon = Icons.Outlined.Battery0Bar) {
+                ResumeItem("Nível de Carga", "${batteryInfo.level}%")
+                ResumeItem("Status", batteryInfo.status)
+                ResumeItem("Saúde da Bateria", batteryInfo.health)
+                ResumeItem("Temperatura", "${batteryTempC}°C")
+                ResumeItem("Tecnologia", batteryInfo.technology)
+            }
+
+            HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
+
+            ResumeSection(title = "Sistema & Segurança", icon = Icons.Outlined.Security) {
+                ResumeItem("Versão do Android", "Android ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})")
+                ResumeItem("Patch de Segurança", securityPatch)
+                ResumeItem("Arquitetura ABI", Build.SUPPORTED_ABIS.firstOrNull() ?: "arm64-v8a")
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            // Action Buttons
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -388,14 +349,15 @@ fun DeviceResumeScreen(
                     modifier = Modifier
                         .weight(1f)
                         .height(48.dp),
-                    shape = CircleShape
+                    shape = CircleShape,
+                    contentPadding = PaddingValues(horizontal = 8.dp)
                 ) {
                     Icon(Icons.Outlined.ContentCopy, contentDescription = null, modifier = Modifier.size(18.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Copiar Ficha", fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text("Copiar Ficha", fontWeight = FontWeight.Bold, maxLines = 1)
                 }
 
-                FilledTonalButton(
+                OutlinedButton(
                     onClick = {
                         val sendIntent = Intent().apply {
                             action = Intent.ACTION_SEND
@@ -407,11 +369,16 @@ fun DeviceResumeScreen(
                     modifier = Modifier
                         .weight(1f)
                         .height(48.dp),
-                    shape = CircleShape
+                    shape = CircleShape,
+                    border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colorScheme.primary
+                    ),
+                    contentPadding = PaddingValues(horizontal = 8.dp)
                 ) {
                     Icon(Icons.Outlined.Share, contentDescription = null, modifier = Modifier.size(18.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Compartilhar", fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text("Compartilhar", fontWeight = FontWeight.Bold, maxLines = 1)
                 }
             }
 
@@ -430,14 +397,17 @@ private fun HighlightMiniCard(
 ) {
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(14.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f),
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surface,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column(
-            modifier = Modifier.padding(12.dp)
+            modifier = Modifier.padding(14.dp)
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
@@ -448,7 +418,9 @@ private fun HighlightMiniCard(
                 Text(
                     text = label,
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
             Spacer(modifier = Modifier.height(6.dp))
@@ -456,7 +428,9 @@ private fun HighlightMiniCard(
                 text = value,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
@@ -464,7 +438,8 @@ private fun HighlightMiniCard(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 11.sp,
-                maxLines = 1
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
@@ -533,23 +508,29 @@ fun getSimInfo(context: Context): String {
 fun ResumeSection(
     title: String,
     icon: ImageVector,
+    modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(16.dp)
             )
-            Spacer(modifier = Modifier.width(6.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = title,
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 0.5.sp
+                fontWeight = FontWeight.Bold
             )
         }
         content()
@@ -557,22 +538,32 @@ fun ResumeSection(
 }
 
 @Composable
-fun ResumeItem(label: String, value: String) {
+fun ResumeItem(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier
+) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.Top
     ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.weight(1f)
         )
+        Spacer(modifier = Modifier.width(16.dp))
         Text(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.End,
+            modifier = Modifier.weight(1.3f)
         )
     }
 }
@@ -580,6 +571,18 @@ fun ResumeItem(label: String, value: String) {
 fun formatMemorySize(bytes: Long): String {
     val gb = bytes / (1024.0 * 1024.0 * 1024.0)
     return String.format(Locale.getDefault(), "%.1f GB", gb)
+}
+
+fun formatDeviceDisplayName(brand: String, model: String): String {
+    val cleanModel = if (model.startsWith(brand, ignoreCase = true)) {
+        model.substring(brand.length).trim()
+    } else {
+        model
+    }
+    val full = if (cleanModel.isNotBlank()) "$brand $cleanModel" else model
+    return full.split(" ").joinToString(" ") { word ->
+        word.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+    }
 }
 
 fun shareResumeImage(context: Context, view: View, scope: CoroutineScope) {

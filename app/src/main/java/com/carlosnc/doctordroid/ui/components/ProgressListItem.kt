@@ -61,6 +61,6 @@ fun ProgressListItem(
         leadingContent = {
             ListIcon(icon = icon)
         },
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+        colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surface)
     )
 }
